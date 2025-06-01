@@ -1,7 +1,7 @@
 import jsonServerInstance from "../api/jsonServerInstance";
 import { NetworkError } from "./errors/commonErrors";
 import { CustomerNotFoundError, GasStationNotFoundError, InvalidCredentialsError, NoRoleAssignedError, UserRegistrationError } from "./errors/authErrors";
-import type { LoginCustomerResponse, LoginGasStationResponse, RegisterCustomerRequest, RegisterGasStationRequest, RegisterUserRequest } from "./models/authModels";
+import type { customerDataJsonResponse, gasStationDataJsonResponse, LoginCustomerResponse, LoginGasStationResponse, RegisterCustomerRequest, RegisterGasStationRequest, RegisterUserRequest, userJsonResponse } from "./models/authModels";
 import { formatTimeOnly } from "../helper/formatTimeHelper";
 
 const USER_URL = "users";
@@ -33,7 +33,7 @@ export const login = async (
       params: { user_id: user.id },
     });
     if (Array.isArray(customerRes.data) && customerRes.data.length > 0) {
-      const customer = customerRes.data[0];
+      const customer:customerDataJsonResponse = customerRes.data[0];
       return {
         fullname: `${user.name} ${user.lastname}`,
         email: user.email,
@@ -55,7 +55,7 @@ export const login = async (
       params: { user_id: user.id },
     });
     if (Array.isArray(gasStationRes.data) && gasStationRes.data.length > 0) {
-      const gs = gasStationRes.data[0];
+      const gs:gasStationDataJsonResponse = gasStationRes.data[0];
       return {
         gasSatationName: gs.gas_station_name,
         adminFullname: `${user.name} ${user.lastname}`,
@@ -86,7 +86,7 @@ const registerUser = async (
     const allUsersRes = await jsonServerInstance.get(USER_URL);
     const maxId =
       allUsersRes.data.reduce(
-        (acc: number, u: { id: number }) => Math.max(acc, u.id || 0), 0
+        (acc: number, u: userJsonResponse) => Math.max(acc, u.id || 0), 0
       ) || 0;
     const newId = maxId + 1;
 
@@ -132,7 +132,7 @@ export const registerCustomer = async (
     const allCustRes = await jsonServerInstance.get(CUSTOMER_DATA_URL);
     const maxCustId =
       allCustRes.data.reduce(
-        (acc: number, c: { id: number }) => Math.max(acc, c.id || 0), 0
+        (acc: number, c: customerDataJsonResponse) => Math.max(acc, c.id || 0), 0
       ) || 0;
     const newCustId = maxCustId + 1;
 
@@ -166,7 +166,7 @@ export const registerGasStation = async (
     const allGSRes = await jsonServerInstance.get(GAS_STATION_DATA_URL);
     const maxGSId =
       allGSRes.data.reduce(
-        (acc: number, gs: { id: number }) => Math.max(acc, gs.id || 0), 0
+        (acc: number, gs: gasStationDataJsonResponse) => Math.max(acc, gs.id || 0), 0
       ) || 0;
     const newGSId = maxGSId + 1;
 
