@@ -94,7 +94,7 @@ const registerUser = async (
       params: { email: payload.email }
     })
 
-    if (!Array.isArray(usersWithSameEmail.data) || usersWithSameEmail.data.length === 0) {
+    if (!Array.isArray(usersWithSameEmail.data) || usersWithSameEmail.data.length !== 0) {
       throw new UserRegistrationError();
     }
 
