@@ -1,4 +1,4 @@
-import { AccountCircle, Image, Visibility, VisibilityOff } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import {
   Box,
@@ -14,7 +14,6 @@ import {
   Typography,
 } from "@mui/material";
 import Container from "@mui/material/Container";
-import PasswordIcon from "@mui/icons-material/Password";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { login } from "../services/authService";
