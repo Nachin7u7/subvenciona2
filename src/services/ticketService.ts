@@ -1,4 +1,5 @@
 import jsonServerInstance from "../api/jsonServerInstance";
+import { formatTimeOnly } from "../helper/formatTimeHelper";
 import { NetworkError, NotFoundError } from "./errors/commonErrors";
 import { TicketWithWrongData, UniqueTicketPerLoad } from "./errors/ticketErrors";
 import type { gasStationDataJsonResponse } from "./models/authModels";
@@ -61,7 +62,7 @@ export const getTicketsByCustomer = async (
           gasSatationName: gasStation?.gas_station_name || "",
           address: gasStation?.address || ""
         }
-      }
+      } as GetTicketsByCustomerResponse;
     });
   } catch (err) {
     if (err instanceof NotFoundError || err instanceof TicketWithWrongData) {
@@ -108,7 +109,7 @@ export const getTicketsByLoad = async (
           quantityLt: ticket.details.quantity_lt,
           amount: ticket.details.amount
         }
-      }
+      } as GetTicketsByLoadResponse;
     });
   } catch (err) {
     if (err instanceof NotFoundError || err instanceof TicketWithWrongData) {
@@ -146,7 +147,7 @@ export const createTicket = async (
       customer_data_id: payload.customerDataId,
       load_id: payload.loadId,
       ticket_numbet: payload.ticketNumber,
-      date: payload.date,
+      date: formatTimeOnly(payload.date),
       details: payload.details
     });
   } catch (err) {
@@ -185,3 +186,21 @@ export const deleteTicket = async (
   }
 };
 
+export const deleteTicketByLoad = async (loadId: number): Promise<void> => {
+  try {
+    const tickets = await getTicketsByLoad(loadId);
+    for (const ticket of tickets) {
+      if (ticket.details.TicketState !== "Realizado") {
+        const details = ticket.details;
+        await jsonServerInstance.patch(`${TICKET_URL}/${ticket.id}`, {
+          details: {
+            ...details,
+            ticket_state_id: 3
+          }
+        });
+      }
+    }
+  } catch (err) {
+    throw new NetworkError(err);
+  }
+};

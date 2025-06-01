@@ -1,12 +1,23 @@
 import jsonServerInstance from "../api/jsonServerInstance";
 import { NetworkError } from "./errors/commonErrors";
 import { CustomerNotFoundError, GasStationNotFoundError, InvalidCredentialsError, NoRoleAssignedError, UserRegistrationError } from "./errors/authErrors";
-import type { customerDataJsonResponse, gasStationDataJsonResponse, LoginCustomerResponse, LoginGasStationResponse, RegisterCustomerRequest, RegisterGasStationRequest, RegisterUserRequest, userJsonResponse } from "./models/authModels";
+import type {
+  LoginCustomerResponse,
+  LoginGasStationResponse,
+  RegisterCustomerRequest,
+  RegisterGasStationRequest,
+  RegisterUserRequest,
+  customerDataJsonResponse,
+  gasStationDataJsonResponse,
+  userJsonResponse,
+  zoneJsonResponse
+} from "./models/authModels";
 import { formatTimeOnly } from "../helper/formatTimeHelper";
 
 const USER_URL = "users";
 const CUSTOMER_DATA_URL = "gas_station_data";
 const GAS_STATION_DATA_URL = "customer_data";
+const ZONE_URL = "zone";
 
 export const login = async (
   email: string,
@@ -33,7 +44,7 @@ export const login = async (
       params: { user_id: user.id },
     });
     if (Array.isArray(customerRes.data) && customerRes.data.length > 0) {
-      const customer:customerDataJsonResponse = customerRes.data[0];
+      const customer: customerDataJsonResponse = customerRes.data[0];
       return {
         fullname: `${user.name} ${user.lastname}`,
         email: user.email,
@@ -55,7 +66,15 @@ export const login = async (
       params: { user_id: user.id },
     });
     if (Array.isArray(gasStationRes.data) && gasStationRes.data.length > 0) {
-      const gs:gasStationDataJsonResponse = gasStationRes.data[0];
+      const gs: gasStationDataJsonResponse = gasStationRes.data[0];
+      const zoneResponse = await jsonServerInstance.get(ZONE_URL, {
+        params: { id: gs.zone_id }
+      })
+      if (!Array.isArray(zoneResponse.data) || !(zoneResponse.data.length > 0)){
+        throw new NetworkError("Invalid Zone Data")
+      }
+      const zo: zoneJsonResponse = zoneResponse.data[0];
+
       return {
         gasSatationName: gs.gas_station_name,
         adminFullname: `${user.name} ${user.lastname}`,
@@ -66,6 +85,7 @@ export const login = async (
         closeTime: new Date(gs.close_time),
         open: gs.open,
         rol: "admin",
+        zone: zo.name,
         serviceDays: gs.service_days,
       } as LoginGasStationResponse;
     } else {
@@ -74,6 +94,8 @@ export const login = async (
   } catch (err) {
     if (err instanceof GasStationNotFoundError) {
       throw new NoRoleAssignedError();
+    }else if (err instanceof NetworkError){
+      throw err
     }
     throw new NetworkError(err);
   }
@@ -108,7 +130,7 @@ const registerUser = async (
 
     return newId;
   } catch (err) {
-    if (err instanceof UserRegistrationError){
+    if (err instanceof UserRegistrationError) {
       throw err
     }
     throw new NetworkError(err);
@@ -178,6 +200,7 @@ export const registerGasStation = async (
       license: payload.license,
       open_time: formatTimeOnly(payload.openTime),
       close_time: formatTimeOnly(payload.closeTime),
+      zone: payload.zone,
       open: payload.open,
       service_days: payload.serviceDays
     });

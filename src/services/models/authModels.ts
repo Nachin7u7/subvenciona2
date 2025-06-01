@@ -16,6 +16,7 @@ export interface LoginGasStationResponse {
   closeTime: Date;
   open: boolean;
   rol: string;
+  zone: string;
   serviceDays: string[];
 };
 
@@ -41,6 +42,7 @@ export interface RegisterGasStationRequest {
   closeTime: Date;
   open: boolean;
   rol: string;
+  zone: number;
   serviceDays: string[];
 };
 
@@ -66,6 +68,12 @@ export interface gasStationDataJsonResponse {
   license: string;
   open_time: string;
   close_time: string;
-  open: true;
+  open: boolean;
+  zone_id: number;
   service_days: string[];
+}
+
+export interface zoneJsonResponse {
+  id: number;
+  name: string
 }

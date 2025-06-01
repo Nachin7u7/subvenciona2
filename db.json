@@ -39,7 +39,8 @@
       "open_time": "0000-00-00T06:00:00",
       "close_time": "0000-00-00T22:00:00",
       "open": true,
-      "service_days":[
+      "zone_id": 1,
+      "service_days": [
         "lunes",
         "martes",
         "miercoles",
@@ -58,7 +59,8 @@
       "open_time": "0000-00-00T07:00:00",
       "close_time": "0000-00-00T23:00:00",
       "open": false,
-      "service_days":[
+      "zone_id": 2,
+      "service_days": [
         "lunes",
         "martes",
         "miercoles",
@@ -66,6 +68,20 @@
         "viernes",
         "sábado"
       ]
+    }
+  ],
+  "zone": [
+    {
+      "id": 1,
+      "name": "Zona Centro"
+    },
+    {
+      "id": 2,
+      "name": "Zona Sur"
+    },
+    {
+      "id": 3,
+      "name": "El Alto"
     }
   ],
   "customer_data": [
@@ -192,6 +208,7 @@
       "gas_station_id": 1,
       "quantity_lt": 1000,
       "date": "2025-06-05T09:00:00",
+      "cancel": false,
       "gas_types": [
         1,
         2
@@ -202,6 +219,7 @@
       "gas_station_id": 2,
       "quantity_lt": 1200,
       "date": "2025-06-06T11:15:00",
+      "cancel": false,
       "gas_types": [
         1,
         3
@@ -212,6 +230,7 @@
       "gas_station_id": 2,
       "quantity_lt": 800,
       "date": "2025-06-07T15:45:00",
+      "cancel": false,
       "gas_types": [
         2,
         4
