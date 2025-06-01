@@ -1,5 +1,5 @@
 import jsonServerInstance from "../api/jsonServerInstance";
-import { formatTimeOnly } from "../helper/formatTimeHelper";
+import { formatDateTime } from "../helper/formatTimeHelper";
 import { NetworkError, NotFoundError } from "./errors/commonErrors";
 import { TicketWithWrongData, UniqueTicketPerLoad } from "./errors/ticketErrors";
 import type { gasStationDataJsonResponse, gasTypeJsonResponse } from "./models/gasStationModels";
@@ -144,7 +144,7 @@ export const createTicket = async (
       customer_data_id: payload.customerDataId,
       load_id: payload.loadId,
       ticket_numbet: payload.ticketNumber,
-      date: formatTimeOnly(payload.date),
+      date: formatDateTime(payload.date),
       details: payload.details
     });
   } catch (err) {

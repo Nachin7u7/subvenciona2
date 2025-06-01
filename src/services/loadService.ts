@@ -1,5 +1,5 @@
 import jsonServerInstance from "../api/jsonServerInstance";
-import { formatTimeOnly } from "../helper/formatTimeHelper";
+import { formatDateTime } from "../helper/formatTimeHelper";
 import { NetworkError, NotFoundError } from "./errors/commonErrors";
 import type { gasTypeJsonResponse } from "./models/gasStationModels";
 import type { CreateLoadRequest, GetLoadByGasStationForCustomerResponse, GetLoadByGasStationResponse, loadJsonResponse, loadPatchJsonResponse, UpdateLoadRequest } from "./models/loadModels";
@@ -108,7 +108,7 @@ export const createLoad = async (request: CreateLoadRequest): Promise<void> => {
       id: newId,
       gas_station_id: request.gasStationId,
       quantity_lt: request.quantityLt,
-      date: request.date,
+      date: formatDateTime(request.date),
       gas_types: request.gasTypes,
       cancel: false
     });
@@ -122,7 +122,7 @@ export const updateLoad = async (request: UpdateLoadRequest): Promise<void> => {
     const loadPatch: loadPatchJsonResponse = {};
     if (request.gasStationId !== undefined) loadPatch.gas_station_id = request.gasStationId;
     if (request.quantityLt !== undefined) loadPatch.quantity_lt = request.quantityLt;
-    if (request.date !== undefined) loadPatch.date = formatTimeOnly(request.date);
+    if (request.date !== undefined) loadPatch.date = formatDateTime(request.date);
     if (request.gasTypes !== undefined) loadPatch.gas_types = request.gasTypes;
     if (request.cancel !== undefined) {
       await deleteTicketByLoad(request.id);
