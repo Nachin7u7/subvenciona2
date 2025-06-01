@@ -59,21 +59,3 @@ export interface customerDataJsonResponse {
   license: string;
   car_plate: string;
 }
-
-export interface gasStationDataJsonResponse {
-  id: number;
-  user_id: number;
-  gas_station_name: string;
-  address: string;
-  license: string;
-  open_time: string;
-  close_time: string;
-  open: boolean;
-  zone_id: number;
-  service_days: string[];
-}
-
-export interface zoneJsonResponse {
-  id: number;
-  name: string
-}

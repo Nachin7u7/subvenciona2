@@ -59,8 +59,3 @@ export interface ticketStateJsonResponse {
   id: number;
   name: string;
 }
-
-export interface gasTypeJsonResponse {
-  id: number;
-  name: string;
-}

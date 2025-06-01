@@ -2,14 +2,13 @@ import jsonServerInstance from "../api/jsonServerInstance";
 import { formatTimeOnly } from "../helper/formatTimeHelper";
 import { NetworkError, NotFoundError } from "./errors/commonErrors";
 import { TicketWithWrongData, UniqueTicketPerLoad } from "./errors/ticketErrors";
-import type { gasStationDataJsonResponse } from "./models/authModels";
+import type { gasStationDataJsonResponse, gasTypeJsonResponse } from "./models/gasStationModels";
 import type {
   GetTicketsByCustomerResponse,
   GetTicketsByLoadResponse,
   CreateTicketRequest,
   ticketJsonResponse,
   ticketStateJsonResponse,
-  gasTypeJsonResponse
 } from "./models/ticketModels";
 
 const GAS_STATION_DATA_URL = "customer_data";

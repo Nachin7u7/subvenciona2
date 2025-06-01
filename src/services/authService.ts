@@ -8,11 +8,10 @@ import type {
   RegisterGasStationRequest,
   RegisterUserRequest,
   customerDataJsonResponse,
-  gasStationDataJsonResponse,
   userJsonResponse,
-  zoneJsonResponse
 } from "./models/authModels";
 import { formatTimeOnly } from "../helper/formatTimeHelper";
+import type { gasStationDataJsonResponse, zoneJsonResponse } from "./models/gasStationModels";
 
 const USER_URL = "users";
 const CUSTOMER_DATA_URL = "gas_station_data";

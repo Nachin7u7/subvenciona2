@@ -1,8 +1,9 @@
 import jsonServerInstance from "../api/jsonServerInstance";
 import { formatTimeOnly } from "../helper/formatTimeHelper";
 import { NetworkError, NotFoundError } from "./errors/commonErrors";
+import type { gasTypeJsonResponse } from "./models/gasStationModels";
 import type { CreateLoadRequest, GetLoadByGasStationForCustomerResponse, GetLoadByGasStationResponse, loadJsonResponse, loadPatchJsonResponse, UpdateLoadRequest } from "./models/loadModels";
-import type { gasTypeJsonResponse, GetTicketsByLoadResponse } from "./models/ticketModels";
+import type { GetTicketsByLoadResponse } from "./models/ticketModels";
 import { deleteTicketByLoad, getTicketsByLoad } from "./ticketService";
 
 const LOAD_URL = "load";
