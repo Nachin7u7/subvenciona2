@@ -183,7 +183,7 @@
     },
     {
       "id": 3,
-      "name": "Calncelado"
+      "name": "Cancelado"
     }
   ],
   "load": [
@@ -221,7 +221,7 @@
   "gas_type": [
     {
       "id": 1,
-      "name": "diecel"
+      "name": "diesel"
     },
     {
       "id": 2,
