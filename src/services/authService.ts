@@ -108,6 +108,9 @@ const registerUser = async (
 
     return newId;
   } catch (err) {
+    if (err instanceof UserRegistrationError){
+      throw err
+    }
     throw new NetworkError(err);
   }
 };
