@@ -107,7 +107,7 @@ const registerUser = async (
     const allUsersRes = await jsonServerInstance.get(USER_URL);
     const maxId =
       allUsersRes.data.reduce(
-        (acc: number, u: userJsonResponse) => Math.max(acc, u.id || 0), 0
+        (acc: number, u: userJsonResponse) => Math.max(acc, parseInt(u.id) || 0), 0
       ) || 0;
     const newId = maxId + 1;
 
@@ -153,7 +153,7 @@ export const registerCustomer = async (
     const allCustRes = await jsonServerInstance.get(CUSTOMER_DATA_URL);
     const maxCustId =
       allCustRes.data.reduce(
-        (acc: number, c: customerDataJsonResponse) => Math.max(acc, c.id || 0), 0
+        (acc: number, c: customerDataJsonResponse) => Math.max(acc, parseInt(c.id) || 0), 0
       ) || 0;
     const newCustId = maxCustId + 1;
 
@@ -187,7 +187,7 @@ export const registerGasStation = async (
     const allGSRes = await jsonServerInstance.get(GAS_STATION_DATA_URL);
     const maxGSId =
       allGSRes.data.reduce(
-        (acc: number, gs: gasStationDataJsonResponse) => Math.max(acc, gs.id || 0), 0
+        (acc: number, gs: gasStationDataJsonResponse) => Math.max(acc, parseInt(gs.id) || 0), 0
       ) || 0;
     const newGSId = maxGSId + 1;
 

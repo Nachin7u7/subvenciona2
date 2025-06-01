@@ -34,7 +34,7 @@ export interface UpdateLoadRequest {
 }
 
 export interface loadJsonResponse {
-  id: number;
+  id: string;
   gas_station_id: number;
   quantity_lt: number;
   date: string;

@@ -41,20 +41,19 @@ export interface RegisterGasStationRequest {
   openTime: Date;
   closeTime: Date;
   open: boolean;
-  rol: string;
   zone: number;
   serviceDays: string[];
 };
 
 export interface userJsonResponse {
-  id: number;
+  id: string;
   name: string;
   lastname: string;
   email: string;
 }
 
 export interface customerDataJsonResponse {
-  id: number;
+  id: string;
   user_id: number;
   license: string;
   car_plate: string;

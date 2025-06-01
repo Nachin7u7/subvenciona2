@@ -10,11 +10,20 @@ export interface GetGasStationResponse {
   serviceDays: string[];
 };
 
-export interface getPricesByGasStationResponse {
+export interface GetPricesByGasStationResponse {
   id: number;
   gasStationId: number;
   gasType: string;
   ltPrice: number;
+}
+export interface GetZoneResponse {
+  id: number;
+  name: string
+}
+
+export interface GetGasTypeResponse {
+  id: number;
+  name: string;
 }
 
 export interface CreatePriceRequest {
@@ -29,7 +38,7 @@ export interface UpdatePriceRequest {
 }
 
 export interface gasStationDataJsonResponse {
-  id: number;
+  id: string;
   user_id: number;
   gas_station_name: string;
   address: string;
@@ -42,17 +51,17 @@ export interface gasStationDataJsonResponse {
 }
 
 export interface zoneJsonResponse {
-  id: number;
+  id: string;
   name: string
 }
 
 export interface gasTypeJsonResponse {
-  id: number;
+  id: string;
   name: string;
 }
 
 export interface priceJsonResponse {
-  id: number;
+  id: string;
   gas_station_id: number;
   gas_type_id: number;
   lt_price: number;

@@ -28,11 +28,11 @@ export const getloadForCustomer = async (
 
     return loadResponse.data.map((load: loadJsonResponse) => {
       const gasTypes = load.gas_types?.map(
-        (id) => gasTypesResponse.data.find((g: gasTypeJsonResponse) => g.id === id)?.name || ""
+        (id) => gasTypesResponse.data.find((g: gasTypeJsonResponse) => g.id === String(id))?.name || ""
       ) || [];
 
       return {
-        id: load.id,
+        id: parseInt(load.id),
         quantityLt: load.quantity_lt,
         date: new Date(load.date),
         gasTypes,
@@ -67,13 +67,13 @@ export const getloadForGasStation = async (
     const loadsWithTickets: GetLoadByGasStationResponse[] = await Promise.all(
       loadResponse.data.map(async (load: loadJsonResponse) => {
         const gasTypes = load.gas_types?.map(
-          (id) => gasTypesResponse.data.find((g: gasTypeJsonResponse) => g.id === id)?.name || ""
+          (id) => gasTypesResponse.data.find((g: gasTypeJsonResponse) => g.id === String(id))?.name || ""
         ) || [];
 
-        const tickets: GetTicketsByLoadResponse[] = await getTicketsByLoad(load.id);
+        const tickets: GetTicketsByLoadResponse[] = await getTicketsByLoad(parseInt(load.id));
 
         return {
-          id: load.id,
+          id: parseInt(load.id),
           quantityLt: load.quantity_lt,
           date: new Date(load.date),
           gasTypes,
@@ -99,7 +99,7 @@ export const createLoad = async (request: CreateLoadRequest): Promise<void> => {
       throw new NetworkError("Error al obtener las cargas existentes");
     }
     const maxId = allLoadsResponse.data.reduce(
-      (acc: number, t: loadJsonResponse) => Math.max(acc, t.id || 0), 0
+      (acc: number, t: loadJsonResponse) => Math.max(acc, parseInt(t.id) || 0), 0
     ) || 0;
 
     const newId = maxId + 1

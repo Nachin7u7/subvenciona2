@@ -27,7 +27,7 @@ export const getTicketsByCustomer = async (
       jsonServerInstance.get(GAS_TYPE_URL)
     ]);
 
-    if (!Array.isArray(ticketsRes.data) || ticketsRes.data.length !== 0) {
+    if (!Array.isArray(ticketsRes.data) || ticketsRes.data.length === 0) {
       throw new NotFoundError("No se encontraron tickets para este cliente");
     }
 
@@ -37,23 +37,23 @@ export const getTicketsByCustomer = async (
 
     return ticketsRes.data.map((ticket: ticketJsonResponse) => {
       const gasStation: gasStationDataJsonResponse = gasStations.find(
-        (g: gasStationDataJsonResponse) => g.id === ticket.gas_station_id);
+        (g: gasStationDataJsonResponse) => g.id === String(ticket.gas_station_id));
       const gasType: gasTypeJsonResponse = gasTypes.find(
-        (g: gasTypeJsonResponse) => g.id === ticket.details.gas_type_id);
+        (g: gasTypeJsonResponse) => g.id === String(ticket.details.gas_type_id));
       const ticketState: ticketStateJsonResponse = ticketStates.find(
-        (s: ticketStateJsonResponse) => s.id === ticket.details.ticket_state_id);
+        (s: ticketStateJsonResponse) => s.id === String(ticket.details.ticket_state_id));
 
       if (!gasStation || !gasType || !ticketState) {
         throw new TicketWithWrongData();
       }
 
       return {
-        id: ticket.id,
+        id: parseInt(ticket.id),
         ticketNumber: ticket.ticket_number,
         date: new Date(ticket.date),
         details: {
           gasType: gasType?.name || "",
-          TicketState: ticketState?.name || "",
+          ticketState: ticketState?.name || "",
           quantityLt: ticket.details.quantity_lt,
           amount: ticket.details.amount
         },
@@ -80,8 +80,7 @@ export const getTicketsByLoad = async (
       jsonServerInstance.get(TICKET_STATE_URL),
       jsonServerInstance.get(GAS_TYPE_URL)
     ]);
-
-    if (!Array.isArray(ticketsRes.data) || ticketsRes.data.length !== 0) {
+    if (!Array.isArray(ticketsRes.data) || ticketsRes.data.length === 0) {
       throw new NotFoundError("No se encontraron tickets para esta carga");
     }
 
@@ -90,21 +89,20 @@ export const getTicketsByLoad = async (
 
     return ticketsRes.data.map((ticket: ticketJsonResponse) => {
       const gasType: gasTypeJsonResponse = gasTypes.find(
-        (g: gasTypeJsonResponse) => g.id === ticket.details.gas_type_id);
+        (g: gasTypeJsonResponse) => g.id === String(ticket.details.gas_type_id));
       const ticketState: ticketStateJsonResponse = ticketStates.find(
-        (s: ticketStateJsonResponse) => s.id === ticket.details.ticket_state_id);
-
+        (s: ticketStateJsonResponse) => s.id === String(ticket.details.ticket_state_id));
       if (!gasType || !ticketState) {
         throw new TicketWithWrongData();
       }
 
       return {
-        id: ticket.id,
+        id: parseInt(ticket.id),
         ticketNumber: ticket.ticket_number,
         date: new Date(ticket.date),
         details: {
           gasType: gasType?.name || "",
-          TicketState: ticketState?.name || "",
+          ticketState: ticketState?.name || "",
           quantityLt: ticket.details.quantity_lt,
           amount: ticket.details.amount
         }
@@ -125,7 +123,7 @@ export const createTicket = async (
     const ticketsRes = await jsonServerInstance.get(TICKET_URL);
     const tickets = ticketsRes.data;
     const maxId = tickets.reduce(
-      (acc: number, t: ticketJsonResponse) => Math.max(acc, t.id || 0), 0
+      (acc: number, t: ticketJsonResponse) => Math.max(acc, parseInt(t.id) || 0), 0
     ) || 0;
     const newId = maxId + 1;
 
@@ -189,7 +187,7 @@ export const deleteTicketByLoad = async (loadId: number): Promise<void> => {
   try {
     const tickets = await getTicketsByLoad(loadId);
     for (const ticket of tickets) {
-      if (ticket.details.TicketState !== "Realizado") {
+      if (ticket.details.ticketState !== "Realizado") {
         const details = ticket.details;
         await jsonServerInstance.patch(`${TICKET_URL}/${ticket.id}`, {
           details: {

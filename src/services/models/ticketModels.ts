@@ -4,7 +4,7 @@ export interface GetTicketsByCustomerResponse {
   date: Date;
   details: {
     gasType: string;
-    TicketState: string;
+    ticketState: string;
     quantityLt: number;
     amount: number;
   };
@@ -20,7 +20,7 @@ export interface GetTicketsByLoadResponse {
   date: Date;
   details: {
     gasType: string;
-    TicketState: string;
+    ticketState: string;
     quantityLt: number;
     amount: number;
   };
@@ -41,7 +41,7 @@ export interface CreateTicketRequest {
 };
 
 export interface ticketJsonResponse {
-  id: number,
+  id: string,
   gas_station_id: number,
   customer_data_id: number,
   load_id: number,
@@ -56,6 +56,6 @@ export interface ticketJsonResponse {
 }
 
 export interface ticketStateJsonResponse {
-  id: number;
+  id: string;
   name: string;
 }

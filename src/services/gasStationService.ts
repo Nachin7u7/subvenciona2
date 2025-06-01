@@ -1,7 +1,7 @@
 import jsonServerInstance from "../api/jsonServerInstance";
 import { NetworkError, NotFoundError } from "./errors/commonErrors";
 import type { userJsonResponse } from "./models/authModels";
-import type { gasStationDataJsonResponse, gasTypeJsonResponse, GetGasStationResponse, getPricesByGasStationResponse, zoneJsonResponse, priceJsonResponse, CreatePriceRequest, UpdatePriceRequest } from "./models/gasStationModels";
+import type { gasStationDataJsonResponse, gasTypeJsonResponse, GetGasStationResponse, GetPricesByGasStationResponse, zoneJsonResponse, priceJsonResponse, CreatePriceRequest, UpdatePriceRequest, GetGasTypeResponse, GetZoneResponse } from "./models/gasStationModels";
 
 const USER_URL = "users";
 const GAS_STATION_DATA_URL = "customer_data";
@@ -22,8 +22,8 @@ export const getGasStations = async (): Promise<GetGasStationResponse[]> => {
     }
 
     return gasStationResponse.data.map((gasStation: gasStationDataJsonResponse) => {
-      const user = usersResponse.data.find((u: userJsonResponse) => u.id === gasStation.user_id);
-      const zone = zonesResponse.data.find((z: zoneJsonResponse) => z.id === gasStation.zone_id);
+      const user = usersResponse.data.find((u: userJsonResponse) => u.id === String(gasStation.user_id));
+      const zone = zonesResponse.data.find((z: zoneJsonResponse) => z.id === String(gasStation.zone_id));
 
       return {
         gasSatationName: gasStation.gas_station_name,
@@ -60,8 +60,8 @@ export const getGasStationById = async (
       throw new NotFoundError("Gasolinera no encontrada");
     }
 
-    const user = usersResponse.data.find((u: userJsonResponse) => u.id === gasStation.user_id);
-    const zone = zonesResponse.data.find((z: zoneJsonResponse) => z.id === gasStation.zone_id);
+    const user = usersResponse.data.find((u: userJsonResponse) => u.id === String(gasStation.user_id));
+    const zone = zonesResponse.data.find((z: zoneJsonResponse) => z.id === String(gasStation.zone_id));
 
     return {
       gasSatationName: gasStation.gas_station_name,
@@ -82,13 +82,18 @@ export const getGasStationById = async (
   }
 };
 
-export const getGasTypes = async (): Promise<gasTypeJsonResponse[]> => {
+export const getGasTypes = async (): Promise<GetGasTypeResponse[]> => {
   try {
     const gasTypesResponse = await jsonServerInstance.get(GAS_TYPE_URL)
     if (Array.isArray(gasTypesResponse.data)) {
       throw new NotFoundError("No se encontraron tipos de combustibles")
     }
-    return gasTypesResponse.data as gasTypeJsonResponse[];
+    return gasTypesResponse.data.map((gasType: gasTypeJsonResponse) => {
+      return {
+        id: parseInt(gasType.id),
+        name: gasType.name
+      } as GetGasTypeResponse;
+    });
   } catch (err) {
     if (err instanceof NotFoundError) {
       throw err
@@ -97,13 +102,18 @@ export const getGasTypes = async (): Promise<gasTypeJsonResponse[]> => {
   }
 }
 
-export const getZones = async (): Promise<zoneJsonResponse[]> => {
+export const getZones = async (): Promise<GetZoneResponse[]> => {
   try {
     const zoneResponse = await jsonServerInstance.get(ZONE_URL)
     if (Array.isArray(zoneResponse.data)) {
       throw new NotFoundError("No se encontraron zonas disponibles")
     }
-    return zoneResponse.data as zoneJsonResponse[];
+    return zoneResponse.data.map((zone: zoneJsonResponse) => {
+      return {
+        id: parseInt(zone.id),
+        name: zone.name
+      } as GetZoneResponse;
+    })
   } catch (err) {
     if (err instanceof NotFoundError) {
       throw err
@@ -114,7 +124,7 @@ export const getZones = async (): Promise<zoneJsonResponse[]> => {
 
 export const getPricesByGasStationId = async (
   gasStationId: number
-): Promise<getPricesByGasStationResponse[]> => {
+): Promise<GetPricesByGasStationResponse[]> => {
   try {
     const [pricesResponse, gasTypesResponse] = await Promise.all([
       jsonServerInstance.get(PRICES_URL, { params: { gas_station_id: gasStationId } }),
@@ -125,15 +135,15 @@ export const getPricesByGasStationId = async (
       throw new NotFoundError("No se encontraron los presios de esta gasolinera")
     }
     return pricesResponse.data.map((price: priceJsonResponse) => {
-      const gasType = gasTypesResponse.data.find((z: gasTypeJsonResponse) => z.id === price.gas_type_id)?.name || "";
+      const gasType = gasTypesResponse.data.find((g: gasTypeJsonResponse) => parseInt(g.id) === price.gas_type_id)?.name || "";
 
       return {
-        id: price.id,
+        id: parseInt(price.id),
         gasStationId: price.gas_station_id,
         gasType: gasType,
         ltPrice: price.lt_price
-      } as getPricesByGasStationResponse;
-    }) as getPricesByGasStationResponse[];
+      } as GetPricesByGasStationResponse;
+    }) as GetPricesByGasStationResponse[];
 
   } catch (err) {
     if (err instanceof NotFoundError) {
@@ -154,7 +164,7 @@ export const createPrice = async (
     }
 
     const maxId = priceResponse.data.reduce(
-      (acc: number, p: priceJsonResponse) => Math.max(acc, p.id || 0), 0
+      (acc: number, p: priceJsonResponse) => Math.max(acc, parseInt(p.id) || 0), 0
     ) || 0;
 
     const newId = maxId + 1;
