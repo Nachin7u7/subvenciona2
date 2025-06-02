@@ -96,15 +96,20 @@ function RegisterPage() {
     validationSchema: schema,
     onSubmit: async (values: any) => {
       console.log("Form values:", values);
+      const userData:RegisterUserRequest={
+        email:values.email,
+        password:values.password,
+        name:values.name,
+        lastname:values.lastname
+      }
+
+      console.log("USERDATA:",userData)
       
       try {
         if (values.admin_role) {
           // Gas Station Registration
           const gasStationData: RegisterGasStationRequest = {
-            email: values.email,
-            password: values.password,
-            name: values.name,
-            lastname: values.lastname,
+            user: userData,
             gasStationName: values.gasStationName,
             address: values.address,
             openTime: values.openTime,
@@ -121,12 +126,9 @@ function RegisterPage() {
         } else {
           // Customer Registration
           const customerData: RegisterCustomerRequest = {
-            email: values.email,
-            password: values.password,
-            name: values.name,
-            lastname: values.lastname,
+            user: userData,
             license: values.license,
-            carPlate: values.carPlate
+            car_plate: values.carPlate
           };
           
           const result = await registerCustomer(customerData);

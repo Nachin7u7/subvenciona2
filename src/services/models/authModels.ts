@@ -37,7 +37,7 @@ export interface RegisterCustomerRequest {
 
 export interface RegisterGasStationRequest {
   user: RegisterUserRequest;
-  gasSatationName: string;
+  gasStationName: string;
   address: string;
   license: string;
   openTime: Date;

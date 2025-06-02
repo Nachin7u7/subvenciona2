@@ -197,7 +197,7 @@ export const registerGasStation = async (
     await jsonServerInstance.post(GAS_STATION_DATA_URL, {
       id: newGSId,
       user_id: newAdminId,
-      gas_station_name: payload.gasSatationName,
+      gas_station_name: payload.gasStationName,
       address: payload.address,
       license: payload.license,
       open_time: formatTimeOnly(payload.openTime),
