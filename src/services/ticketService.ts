@@ -58,7 +58,7 @@ export const getTicketsByCustomer = async (
           amount: ticket.details.amount
         },
         gasStation: {
-          gasSatationName: gasStation?.gas_station_name || "",
+          gasStationName: gasStation?.gas_station_name || "",
           address: gasStation?.address || ""
         }
       } as GetTicketsByCustomerResponse;
