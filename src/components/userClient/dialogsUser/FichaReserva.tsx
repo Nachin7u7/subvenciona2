@@ -14,33 +14,75 @@ import {
   Radio,
   Typography,
   Grid,
+  TextField
 } from '@mui/material';
-import { Formik, Form} from 'formik';
+import { useEffect, useState } from 'react';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-
-const horasDisponibles = [
-  { value: '09:00', label: '09:00 AM', disponible: true },
-  { value: '10:00', label: '10:00 AM', disponible: false },
-  { value: '11:00', label: '11:00 AM', disponible: true },
-  { value: '12:00', label: '12:00 PM', disponible: true },
-  { value: '13:00', label: '01:00 PM', disponible: false },
-];
+import jsonServerInstance from '../../../api/jsonServerInstance';
 
 const today = new Date();
 const tomorrow = new Date();
 tomorrow.setDate(today.getDate() + 1);
 
 const reservaSchema = Yup.object().shape({
-  zona: Yup.string().required('Campo obligatorio'),
-  estacion: Yup.string().required('Campo obligatorio'),
-  combustible: Yup.string().required('Campo obligatorio'),
+  gas_station_id: Yup.number().required('Campo obligatorio'),
+  customer_data_id: Yup.number().required('Campo obligatorio'),
+  gas_type_id: Yup.number().required('Campo obligatorio'),
   fecha: Yup.string().required('Campo obligatorio'),
   hora: Yup.string().required('Selecciona una hora'),
+  quantity_lt: Yup.number().required('Cantidad requerida').min(1),
+  amount: Yup.number().required('Total requerido').min(1),
 });
 
 const FichaReserva = ({ open, onClose }) => {
-  const handleSubmit = (values) => {
-    onClose();
+  const [horasDisponibles, setHorasDisponibles] = useState([]);
+  const [gasStations, setGasStations] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [gasTypes, setGasTypes] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [horasRes, estacionesRes, clientesRes, tiposRes] = await Promise.all([
+          jsonServerInstance.get('/horas_disponibles'),
+          jsonServerInstance.get('/gas_station_data'),
+          jsonServerInstance.get('/customer_data'),
+          jsonServerInstance.get('/gas_type'),
+        ]);
+        setHorasDisponibles(horasRes.data);
+        setGasStations(estacionesRes.data);
+        setClientes(clientesRes.data);
+        setGasTypes(tiposRes.data);
+      } catch (error) {
+        console.error('Error cargando datos:', error);
+      }
+    };
+
+    if (open) fetchData();
+  }, [open]);
+
+  const handleSubmit = async (values) => {
+    const newTicket = {
+      gas_station_id: values.gas_station_id,
+      customer_data_id: values.customer_data_id,
+      load_id: 1,
+      ticket_number: Date.now(),
+      date: `${values.fecha}T${values.hora}`,
+      details: {
+        gas_type_id: values.gas_type_id,
+        ticket_state_id: 1,
+        quantity_lt: values.quantity_lt,
+        amount: values.amount,
+      }
+    };
+
+    try {
+      await jsonServerInstance.post('/tickets', newTicket);
+      onClose();
+    } catch (error) {
+      console.error('Error creando ticket:', error);
+    }
   };
 
   return (
@@ -48,7 +90,7 @@ const FichaReserva = ({ open, onClose }) => {
       <DialogTitle>
         <Grid container justifyContent="space-between">
           <Grid item>
-            <Typography variant="subtitle2">#12345</Typography>
+            <Typography variant="subtitle2">#Reserva</Typography>
           </Grid>
           <Grid item>
             <Typography variant="h6">Ficha de gasolina</Typography>
@@ -57,11 +99,13 @@ const FichaReserva = ({ open, onClose }) => {
       </DialogTitle>
       <Formik
         initialValues={{
-          zona: '',
-          estacion: '',
-          combustible: '',
+          gas_station_id: '',
+          customer_data_id: '',
+          gas_type_id: '',
           fecha: '',
           hora: '',
+          quantity_lt: '',
+          amount: '',
         }}
         validationSchema={reservaSchema}
         onSubmit={handleSubmit}
@@ -69,33 +113,34 @@ const FichaReserva = ({ open, onClose }) => {
         {({ values, errors, touched, handleChange, setFieldValue }) => (
           <Form>
             <DialogContent dividers>
-              <FormControl fullWidth margin="normal" error={touched.zona && !!errors.zona}>
-                <InputLabel>Zona</InputLabel>
-                <Select name="zona" value={values.zona} onChange={handleChange} label="Zona">
-                  <MenuItem value="norte">Norte</MenuItem>
-                  <MenuItem value="sur">Sur</MenuItem>
-                  <MenuItem value="este">Este</MenuItem>
-                  <MenuItem value="oeste">Oeste</MenuItem>
-                </Select>
-                <FormHelperText>{touched.zona && errors.zona}</FormHelperText>
-              </FormControl>
-
-              <FormControl fullWidth margin="normal" error={touched.estacion && !!errors.estacion}>
+              <FormControl fullWidth margin="normal" error={touched.gas_station_id && !!errors.gas_station_id}>
                 <InputLabel>Estación de gasolina</InputLabel>
-                <Select name="estacion" value={values.estacion} onChange={handleChange} label="Estación">
-                  <MenuItem value="estacion1">Estación 1</MenuItem>
-                  <MenuItem value="estacion2">Estación 2</MenuItem>
+                <Select name="gas_station_id" value={values.gas_station_id} onChange={handleChange} label="Estación">
+                  {gasStations.map((station) => (
+                    <MenuItem key={station.id} value={station.id}>{station.gas_station_name}</MenuItem>
+                  ))}
                 </Select>
-                <FormHelperText>{touched.estacion && errors.estacion}</FormHelperText>
+                <FormHelperText>{touched.gas_station_id && errors.gas_station_id}</FormHelperText>
               </FormControl>
 
-              <FormControl fullWidth margin="normal" error={touched.combustible && !!errors.combustible}>
-                <InputLabel>Tipo de combustible</InputLabel>
-                <Select name="combustible" value={values.combustible} onChange={handleChange} label="Tipo de combustible">
-                  <MenuItem value="diesel">Diesel</MenuItem>
-                  <MenuItem value="gas">Gas</MenuItem>
+              <FormControl fullWidth margin="normal" error={touched.customer_data_id && !!errors.customer_data_id}>
+                <InputLabel>Cliente</InputLabel>
+                <Select name="customer_data_id" value={values.customer_data_id} onChange={handleChange} label="Cliente">
+                  {clientes.map((c) => (
+                    <MenuItem key={c.id} value={c.id}>{c.license} - {c.car_plate}</MenuItem>
+                  ))}
                 </Select>
-                <FormHelperText>{touched.combustible && errors.combustible}</FormHelperText>
+                <FormHelperText>{touched.customer_data_id && errors.customer_data_id}</FormHelperText>
+              </FormControl>
+
+              <FormControl fullWidth margin="normal" error={touched.gas_type_id && !!errors.gas_type_id}>
+                <InputLabel>Tipo de combustible</InputLabel>
+                <Select name="gas_type_id" value={values.gas_type_id} onChange={handleChange} label="Tipo">
+                  {gasTypes.map((t) => (
+                    <MenuItem key={t.id} value={t.id}>{t.name}</MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>{touched.gas_type_id && errors.gas_type_id}</FormHelperText>
               </FormControl>
 
               <FormControl fullWidth margin="normal" error={touched.fecha && !!errors.fecha}>
@@ -127,9 +172,7 @@ const FichaReserva = ({ open, onClose }) => {
                           control={
                             <Radio
                               disabled={!hora.disponible}
-                              sx={{
-                                color: hora.disponible ? 'grey.400' : 'grey.600',
-                              }}
+                              sx={{ color: hora.disponible ? 'grey.400' : 'grey.600' }}
                             />
                           }
                           label={hora.label}
@@ -148,6 +191,30 @@ const FichaReserva = ({ open, onClose }) => {
                 </RadioGroup>
                 <FormHelperText>{touched.hora && errors.hora}</FormHelperText>
               </FormControl>
+
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Cantidad (litros)"
+                name="quantity_lt"
+                type="number"
+                value={values.quantity_lt}
+                onChange={handleChange}
+                error={touched.quantity_lt && !!errors.quantity_lt}
+                helperText={touched.quantity_lt && errors.quantity_lt}
+              />
+
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Total a pagar ($)"
+                name="amount"
+                type="number"
+                value={values.amount}
+                onChange={handleChange}
+                error={touched.amount && !!errors.amount}
+                helperText={touched.amount && errors.amount}
+              />
             </DialogContent>
 
             <DialogActions>
