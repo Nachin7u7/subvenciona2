@@ -1,8 +1,12 @@
-import { Flare, Visibility, VisibilityOff } from "@mui/icons-material";
-import { Box, Button, CardContent, CardMedia, Container, FilledInput, FormControl, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Box, Button, CardContent, CardMedia, Container, FilledInput, FormControl, Grid, IconButton, InputAdornment, InputLabel, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { useState } from "react";
 import GasStationForm from "../components/GasStationForm";
 import ClientForm from "../components/ClientForm";
+import PersonIcon from '@mui/icons-material/Person';
+import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+
+
 
 function RegisterPage() {
   const [modoAdminCreate, setModoAdminCreate] = useState(false);
@@ -14,11 +18,16 @@ function RegisterPage() {
     setModoAdminCreate(newModoAdmin);
   };
 
-  const children = [
-    <ToggleButton value={false} key="Cliente">
+  const [user, setUser] = useState({ name: "", lastname: "", email: "", password: "" });
+  const [client, setClient] = useState({ license: "", car_plate: "" });
+  const [gasStation, setGasStation] = useState({ name: "", address: "", license: "", open_time: "", close_time: "", service_days: [] });
 
+
+  const children = [
+    <ToggleButton value={false} key="Cliente" sx={{display:"flex",flexDirection:'column'}}>
+      <PersonIcon sx={{height:50,width:50}}/>
       <Typography
-        sx={{ fontWeight: '600', fontSize: '1rem', color: "#242424" }}
+        sx={{width:110, fontWeight: '600', fontSize: '1rem', color: !modoAdminCreate?"#242424":"#757575" }}
         variant="h5"
         component="h5"
       >
@@ -26,9 +35,10 @@ function RegisterPage() {
       </Typography>
     </ToggleButton>,
 
-    <ToggleButton value={true} key="Gasolinera">
+    <ToggleButton value={true} key="Gasolinera" sx={{display:"flex",flexDirection:'column'}}>
+      <LocalGasStationIcon sx={{height:50,width:50}}/>
       <Typography
-        sx={{ fontWeight: '600', fontSize: '1rem', color: "#242424" }}
+        sx={{width:110, fontWeight: '600', fontSize: '1rem', color: modoAdminCreate?"#242424":"#757575" }}
         variant="h5"
         component="h5"
       >
@@ -176,10 +186,10 @@ function RegisterPage() {
                 sx={{ marginBottom: 1, borderRadius: 10 }}
               // error={formik.touched.password && Boolean(formik.errors.password)}
               >
-                <InputLabel htmlFor="filled-adornment-password">Repetir Contraseña</InputLabel>
+                <InputLabel htmlFor="filled-adornment-repeat-password">Repetir Contraseña</InputLabel>
                 <FilledInput
-                  id="filled-adornment-password"
-                  name="password"
+                  id="filled-adornment-repeat-password"
+                  name="repeat-password"
                   type={showPassword ? "text" : "password"}
                   // value={formik.values.password}
                   // onChange={formik.handleChange}
@@ -206,42 +216,42 @@ function RegisterPage() {
               </FormControl>
             </Grid>
             <Grid size={12}>
-            <Typography
-              sx={{ fontWeight: '600', fontSize: '1.5rem', color: "#242424", marginBottom:3 }}
-              variant="h5"
-              component="h4"
-              gutterBottom
-            >
-              Seleccione Tipo de Usuario:
-            </Typography>
+              <Typography
+                sx={{ fontWeight: '600', fontSize: '1.5rem', color: "#242424", marginBottom: 3 }}
+                variant="h5"
+                component="h4"
+                gutterBottom
+              >
+                Seleccione Tipo de Usuario:
+              </Typography>
               <ToggleButtonGroup size="large" {...control} aria-label="Large sizes">
                 {children}
               </ToggleButtonGroup>
-              
+
             </Grid>
-          {modoAdminCreate ? <GasStationForm /> : <ClientForm />}
-          <Grid size={12}>
-          <Button
-              type="submit"
-              //disabled={!(formik.dirty && formik.isValid)}
-              sx={{
-                marginTop: 2,
-                width: "75%",
-                height: '3rem',
-                fontSize: '1rem',
-                borderRadius: 20,
-                backgroundColor: '#1E8BC3',
-                fontWeight: '500quiero'
+            {modoAdminCreate ? <GasStationForm /> : <ClientForm />}
+            <Grid size={12}>
+              <Button
+                type="submit"
+                //disabled={!(formik.dirty && formik.isValid)}
+                sx={{
+                  marginBottom: 1,
+                  width: "75%",
+                  height: '3rem',
+                  fontSize: '1rem',
+                  borderRadius: 20,
+                  backgroundColor: '#1E8BC3',
+                  fontWeight: '500quiero'
 
-              }}
-              variant="contained"
-            >
-              {`Registrar ${!modoAdminCreate ? "Cliente" : "Gasolinera"}`}
-            </Button>
-          </Grid>
+                }}
+                variant="contained"
+              >
+                {`Registrar ${!modoAdminCreate ? "Cliente" : "Gasolinera"}`}
+              </Button>
+            </Grid>
           </Grid>
 
-          
+
 
         </CardContent>
       </Box>
