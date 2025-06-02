@@ -1,6 +1,6 @@
 // RegisterPage.tsx - Fixed version
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Box, Button, CardContent, CardMedia, Container, FilledInput, FormControl, Grid, IconButton, InputAdornment, InputLabel, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Box, Button, CardContent, CardMedia, Container, Dialog, DialogActions, DialogTitle, FilledInput, FormControl, Grid, IconButton, InputAdornment, InputLabel, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import GasStationForm from "../components/GasStationForm";
 import { ClientForm } from "../components/ClientForm";
@@ -12,6 +12,8 @@ import { useFormik } from "formik";
 import { registerCustomer, registerGasStation } from "../services/authService";
 import { UserRegistrationError } from "../services/errors/authErrors";
 import Toast from "../components/Toast";
+import { useNavigate } from "react-router-dom";
+
 
 const schema = object({
   email: string().email("email no valido").required("email obligatorio"),
@@ -80,6 +82,20 @@ function RegisterPage() {
     setRegError(false);
   };
 
+  const navigate = useNavigate();
+  const [openConfirm, setOpenConfirm] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpenConfirm(true);
+  };
+
+  const handleClose = () => {
+    setOpenConfirm(false);
+    navigate("/login", {
+      replace: true,
+    });
+  };
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -142,7 +158,7 @@ function RegisterPage() {
           const result = await registerCustomer(customerData);
           console.log("Customer registered successfully:", result);
         }
-        
+        handleClickOpen()
         // Handle success (redirect, show message, etc.)
         
       } catch (error) {
@@ -214,9 +230,23 @@ function RegisterPage() {
 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
+  
 
   return (
     <Container maxWidth='xs' sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
+      <Dialog
+        open={openConfirm}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Cuenta Registrada Exitosamente"}
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleClose}>Aceptar</Button>
+        </DialogActions>
+      </Dialog>
       <Toast
               open={regError}
               message={errorMessage}
