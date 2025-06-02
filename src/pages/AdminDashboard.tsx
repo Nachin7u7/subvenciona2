@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Box,
     Typography,
@@ -14,7 +14,8 @@ import AdminTickets from "../components/AdminTickets.tsx";
 import gasLogo from "../assets/gasolinaYaProfile.png";
 import { getAdminDashboardData } from "../services/adminDashboardService";
 
-const LOGGED_USER_ID = 2; // Ricardo nota para despues: simulacion de usuario logeado
+const LOGGED_USER = JSON.parse(localStorage.getItem("user") || "{}");
+const LOGGED_USER_ID = parseInt(LOGGED_USER.id || "0");
 
 function CapacityModal({ open, onClose, onSave }: any) {
     const [capacity, setCapacity] = useState("");
@@ -106,7 +107,7 @@ function EditStationModal({ open, onClose, station, onSave }: any) {
     );
 }
 
-const Dashboard: React.FC = () => {
+const AdminDashboard: React.FC = () => {
     const [db, setDb] = useState<any>(null);
     const [showCapacityModal, setShowCapacityModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -120,7 +121,7 @@ const Dashboard: React.FC = () => {
     }, []);
 
     if (!db) return <div>Cargando...</div>;
-    const myStation = db.myStation;
+    const myStation = db.gasStations.find((gs: any) => parseInt(gs.userId) === LOGGED_USER_ID);
     if (!myStation) return <div>No tienes una estación asignada.</div>;
 
     const myTickets = db.tickets;
@@ -269,4 +270,4 @@ const Dashboard: React.FC = () => {
     );
 };
 
-export default Dashboard;
+export default AdminDashboard;

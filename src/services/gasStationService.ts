@@ -26,6 +26,7 @@ export const getGasStations = async (): Promise<GetGasStationResponse[]> => {
       const zone = zonesResponse.data.find((z: zoneJsonResponse) => z.id === String(gasStation.zone_id));
 
       return {
+        userId: gasStation.user_id,
         gasSatationName: gasStation.gas_station_name,
         adminFullname: user ? `${user.name} ${user.lastname}` : "Administrador desconocido",
         address: gasStation.address,

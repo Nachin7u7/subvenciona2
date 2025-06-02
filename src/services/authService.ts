@@ -46,6 +46,7 @@ export const login = async (
     if (Array.isArray(customerRes.data) && customerRes.data.length > 0) {
       const customer: customerDataJsonResponse = customerRes.data[0];
       return {
+        id: user.id,
         fullname: `${user.name} ${user.lastname}`,
         email: user.email,
         license: customer.license,
@@ -77,6 +78,7 @@ export const login = async (
       const zo: zoneJsonResponse = zoneResponse.data[0];
 
       return {
+        id: gs.id,
         gasStationName: gs.gas_station_name,
         adminFullname: `${user.name} ${user.lastname}`,
         adminEmail: user.email,
@@ -193,7 +195,7 @@ export const registerGasStation = async (
         (acc: number, gs: gasStationDataJsonResponse) => Math.max(acc, parseInt(gs.id) || 0), 0
       ) || 0;
     const newGSId = maxGSId + 1;
-    
+
     const CloseTime = hourToDate(payload.closeTime.toString());
     const OpenTime =  hourToDate(payload.openTime.toString());
 

@@ -1,10 +1,46 @@
-import { Card, CardHeader, CardContent, Typography, Divider, Stack, Button } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Card, CardHeader, CardContent, Typography, Divider, Stack, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import { deleteTicket, updateTicketState, fetchTickets } from "../services/ticketService";
 
-function AdminTickets({ tickets = [], users = [], onDelete }: any) {
+function AdminTickets({ tickets = [], users = [] }: any) {
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+    const [currentTickets, setCurrentTickets] = useState(tickets);
+
+    useEffect(() => {
+        setCurrentTickets(tickets);
+    }, [tickets]);
+
+    const refreshTickets = async () => {
+        try {
+            const updatedTickets = await fetchTickets();
+            setCurrentTickets(updatedTickets);
+        } catch (error) {
+            console.error("Error actualizando los tickets:", error);
+        }
+    };
+
+    const handleDelete = async (ticketId: number) => {
+        try {
+            await deleteTicket(ticketId, false);
+            await refreshTickets();
+        } catch (error) {
+            console.error("Error eliminando el ticket:", error);
+        }
+    };
+
+    const handleComplete = async (ticketId: number) => {
+        try {
+            await updateTicketState(ticketId, "Realizado");
+            await refreshTickets();
+        } catch (error) {
+            console.error("Error completando el ticket:", error);
+        }
+    };
 
     return (
         <div style={{ display: "flex", flexWrap: "wrap" }}>
-            {(tickets || []).map((ticket: any) => {
+            {(currentTickets || []).map((ticket: any) => {
                 const user = (users || []).find((u: any) => parseInt(u.id) === parseInt(ticket.customerId)) || null;
 
                 return (
@@ -78,19 +114,57 @@ function AdminTickets({ tickets = [], users = [], onDelete }: any) {
                         </CardContent>
                         <Divider />
                         <div style={{ padding: 16, paddingTop: 8, display: "flex", gap: 8 }}>
-                            <Button variant="outlined" color="error" size="small" fullWidth onClick={() => onDelete(ticket.id)}>
+                            <Button
+                                variant="outlined"
+                                color="error"
+                                size="small"
+                                fullWidth
+                                onClick={() => {
+                                    setSelectedTicketId(ticket.id);
+                                    setOpenModal(true);
+                                }}
+                                disabled={ticket.details.ticketState !== "Pendiente"}
+                            >
                                 Eliminar
                             </Button>
-                            <Button variant="outlined" color="primary" size="small" fullWidth>
-                                Editar
-                            </Button>
-                            <Button variant="outlined" color="secondary" size="small" fullWidth>
-                                Mover
+                            <Button
+                                variant="outlined"
+                                color="secondary"
+                                size="small"
+                                fullWidth
+                                onClick={() => handleComplete(ticket.id)}
+                                disabled={ticket.details.ticketState !== "Pendiente"}
+                            >
+                                Completar
                             </Button>
                         </div>
                     </Card>
                 );
             })}
+            <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+                <DialogTitle>Confirmar eliminación</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        ¿Estás seguro de que deseas eliminar este ticket? Esta acción no se puede deshacer.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenModal(false)} color="primary">
+                        Cancelar
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            if (selectedTicketId) {
+                                handleDelete(selectedTicketId);
+                            }
+                            setOpenModal(false);
+                        }}
+                        color="error"
+                    >
+                        Confirmar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }

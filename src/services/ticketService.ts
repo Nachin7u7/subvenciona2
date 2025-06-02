@@ -204,3 +204,42 @@ export const deleteTicketByLoad = async (loadId: number): Promise<void> => {
     throw new NetworkError(err);
   }
 };
+
+export const fetchTickets = async (): Promise<ticketJsonResponse[]> => {
+  try {
+    const response = await jsonServerInstance.get(TICKET_URL);
+    if (!Array.isArray(response.data)) {
+      throw new NotFoundError("No se encontraron tickets");
+    }
+    return response.data;
+  } catch (err) {
+    if (err instanceof NotFoundError) {
+      throw err;
+    }
+    throw new NetworkError(err);
+  }
+}
+
+export const updateTicketState = async (ticketId: number, newState: string): Promise<void> => {
+  try {
+    const ticketResponse = await jsonServerInstance.get(`${TICKET_URL}/${ticketId}`);
+
+    if (!ticketResponse.data) {
+      throw new NotFoundError("El ticket especificado no existe");
+    }
+
+    const { details } = ticketResponse.data as ticketJsonResponse;
+
+    await jsonServerInstance.patch(`${TICKET_URL}/${ticketId}`, {
+      details: {
+        ...details,
+        ticket_state_id: newState === "Realizado" ? 2 : 3
+      }
+    });
+  } catch (err) {
+    if (err instanceof NotFoundError) {
+      throw err;
+    }
+    throw new NetworkError(err);
+  }
+};
