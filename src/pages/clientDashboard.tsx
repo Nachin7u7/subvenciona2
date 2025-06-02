@@ -4,14 +4,14 @@ import MyActiveTickets from '../components/MyActiveTickets';
 
 const ClientDashboard = () => {
   return (
-    <Box sx={{ p: 3, height: '100vh', overflow: 'auto' }}>
-      <Box sx={{ height: '50%', overflowY: 'auto', pr: 1 }}>
+    <Box sx={{height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column'}}>
+      <Box sx={{ flex: 1, overflowY: 'auto', minHeight: 0, pr: 1 }}>
         <ClientStationList />
       </Box>
 
       <Divider sx={{ my: 2 }} />
 
-      <Box sx={{ height: '50%', overflowY: 'auto', pr: 1 }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', minHeight: 0, pr: 1 }}>
         <MyActiveTickets />
       </Box>
     </Box>
