@@ -11,9 +11,6 @@ import { useFormik } from "formik";
 import { registerCustomer, registerGasStation } from "../services/authService";
 import { UserRegistrationError } from "../services/errors/authErrors";
 
-const dayschema = object({
-  day: string().required()
-})
 const schema = object({
   email: string().email("email no valido").required("email obligatorio"),
   password: string().min(6, "la contraseña debe tener 6 caracteres").required("La Contraseña es obligatoria"),
@@ -36,7 +33,7 @@ const schema = object({
   open: boolean().optional(),
   zone: number().positive().optional(),
   
-  serviceDays: array().of(dayschema).optional()
+  serviceDays: array().of(string()).optional()
 })
 
 function RegisterPage() {
@@ -60,7 +57,7 @@ function RegisterPage() {
       closeTime: null as Date | null,  // in initialValues
       open: false,
       zone: 0,
-      serviceDays: [] as Array<{ day: string }>,
+      serviceDays: [] ,
 
     },
     validationSchema: schema,

@@ -22,7 +22,7 @@ interface GasStationFormProps {
     closeTime?: boolean;
     open?: boolean;
     zone?: boolean;
-    serviceDays?: boolean;
+    // serviceDays?: boolean;
   };
   errors: {
     license?:string;
@@ -206,7 +206,9 @@ const GasStationForm = ({setFieldValue,onChange,onBlur,values,touched,errors}:Ga
           </Box>
         </Box>
 
-        {touched.serviceDays && errors.serviceDays && (
+        {
+        // touched.serviceDays &&
+         errors.serviceDays && (
           <Typography color="error" variant="body2" sx={{ mt: 1 }}>
             {errors.serviceDays}
           </Typography>
