@@ -7,6 +7,7 @@ export interface GetGasStationResponse {
   closeTime: Date;
   open: boolean;
   zone: string;
+  image: string;
   serviceDays: string[];
 };
 
@@ -47,6 +48,7 @@ export interface gasStationDataJsonResponse {
   close_time: string;
   open: boolean;
   zone_id: number;
+  image: string;
   service_days: string[];
 }
 

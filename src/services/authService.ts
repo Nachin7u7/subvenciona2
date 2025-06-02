@@ -77,7 +77,7 @@ export const login = async (
       const zo: zoneJsonResponse = zoneResponse.data[0];
 
       return {
-        gasSatationName: gs.gas_station_name,
+        gasStationName: gs.gas_station_name,
         adminFullname: `${user.name} ${user.lastname}`,
         adminEmail: user.email,
         address: gs.address,
@@ -197,13 +197,14 @@ export const registerGasStation = async (
     await jsonServerInstance.post(GAS_STATION_DATA_URL, {
       id: newGSId,
       user_id: newAdminId,
-      gas_station_name: payload.gasSatationName,
+      gas_station_name: payload.gasStationName,
       address: payload.address,
       license: payload.license,
       open_time: formatTimeOnly(payload.openTime),
       close_time: formatTimeOnly(payload.closeTime),
       zone: payload.zone,
       open: payload.open,
+      image: "https://spanish.xinhuanet.com/2018-01/08/136878630_15153933747041n.jpg",
       service_days: payload.serviceDays
     });
   } catch (err) {
