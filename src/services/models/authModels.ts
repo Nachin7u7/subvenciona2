@@ -4,6 +4,7 @@ export interface LoginCustomerResponse {
   license: string;
   carPlate: string;
   rol: string;
+  token: string;
 };
 
 export interface LoginGasStationResponse {
@@ -18,6 +19,7 @@ export interface LoginGasStationResponse {
   rol: string;
   zone: string;
   serviceDays: string[];
+  token: string;
 };
 
 export interface RegisterUserRequest {

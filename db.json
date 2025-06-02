@@ -36,8 +36,8 @@
       "gas_station_name": "Estación Uno",
       "address": "Av. Siempre Viva 123",
       "license": "LIC-98432MX",
-      "open_time": "0000-00-00T06:00:00",
-      "close_time": "0000-00-00T22:00:00",
+      "open_time": "2000-01-01T06:00:00",
+      "close_time": "2000-01-01T22:00:00",
       "open": true,
       "zone_id": 1,
       "service_days": [
@@ -56,8 +56,8 @@
       "gas_station_name": "Estación Dos",
       "license": "LIC-67219MX",
       "address": "Calle Falsa 456",
-      "open_time": "0000-00-00T07:00:00",
-      "close_time": "0000-00-00T23:00:00",
+      "open_time": "2000-01-01T07:00:00",
+      "close_time": "2000-01-01T23:00:00",
       "open": false,
       "zone_id": 2,
       "service_days": [
@@ -199,7 +199,7 @@
     },
     {
       "id": 3,
-      "name": "Calncelado"
+      "name": "Cancelado"
     }
   ],
   "load": [

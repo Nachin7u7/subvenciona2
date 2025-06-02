@@ -12,10 +12,11 @@ import type {
 } from "./models/authModels";
 import { formatTimeOnly } from "../helper/formatTimeHelper";
 import type { gasStationDataJsonResponse, zoneJsonResponse } from "./models/gasStationModels";
+import { generateFakeJWT } from "../helper/Tokens";
 
 const USER_URL = "users";
-const CUSTOMER_DATA_URL = "gas_station_data";
-const GAS_STATION_DATA_URL = "customer_data";
+const CUSTOMER_DATA_URL = "customer_data";
+const GAS_STATION_DATA_URL = "gas_station_data";
 const ZONE_URL = "zone";
 
 export const login = async (
@@ -50,6 +51,7 @@ export const login = async (
         license: customer.license,
         carPlate: customer.car_plate,
         rol: "customer",
+        token: generateFakeJWT()
       } as LoginCustomerResponse;
     } else {
       throw new CustomerNotFoundError();
@@ -86,6 +88,7 @@ export const login = async (
         rol: "admin",
         zone: zo.name,
         serviceDays: gs.service_days,
+        token: generateFakeJWT()
       } as LoginGasStationResponse;
     } else {
       throw new GasStationNotFoundError();
