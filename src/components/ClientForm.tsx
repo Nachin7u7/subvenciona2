@@ -39,7 +39,7 @@ export const ClientForm = ({onChange,onBlur,values,touched,errors}:ClientFormPro
           fullWidth
           label="Placa del auto"
           variant="filled"
-          name="car_plate"
+          name="carPlate"
           onChange={onChange}
           onBlur={onBlur}
           value={values.carPlate}

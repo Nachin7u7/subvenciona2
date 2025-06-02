@@ -1,21 +1,22 @@
-// components/GasStationForm.jsx
-import { Grid, TextField, Checkbox, FormGroup, FormControlLabel, Typography, Box } from "@mui/material";
+// components/GasStationForm.tsx - Fixed version
+import { Grid, TextField, Checkbox, FormControlLabel, Typography, Box } from "@mui/material";
+
 interface GasStationFormProps {
   onChange: (e: React.ChangeEvent<any>) => void;
   onBlur: (e: React.FocusEvent<any>) => void;
   setFieldValue: (field: string, value: any) => void;
   values: {
-    license:string;
+    license: string;
     gasStationName: string;
     address: string;
-    openTime: Date|null;
-    closeTime: Date|null;
+    openTime: string;  // Changed to string
+    closeTime: string; // Changed to string
     open: boolean;
     zone: number;
-    serviceDays: Array<{ day: string }>;
+    serviceDays: string[]; // Fixed type
   };
   touched: {
-    license?:boolean;
+    license?: boolean;
     gasStationName?: boolean;
     address?: boolean;
     openTime?: boolean;
@@ -25,17 +26,16 @@ interface GasStationFormProps {
     serviceDays?: boolean;
   };
   errors: {
-    license?:string;
+    license?: string;
     gasStationName?: string;
     address?: string;
     openTime?: string;
     closeTime?: string;
     open?: string;
     zone?: string;
-    serviceDays?: string|string[];
+    serviceDays?: string | string[];
   };
 }
-
 
 const daysOfWeek = [
   { value: "lunes", label: "lunes" },
@@ -47,27 +47,25 @@ const daysOfWeek = [
   { value: "domingo", label: "domingo" },
 ];
 
-const GasStationForm = ({setFieldValue,onChange,onBlur,values,touched,errors}:GasStationFormProps) => {
+const GasStationForm = ({ setFieldValue, onChange, onBlur, values, touched, errors }: GasStationFormProps) => {
 
   const handleDayChange = (day: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const currentDays = values.serviceDays.map(d => d.day);
-    let newDays: Array<{ day: string }>;
+    let newDays: string[];
 
     if (event.target.checked) {
       // Add day if checked
-      newDays = [...values.serviceDays, { day }];
+      newDays = [...values.serviceDays, day];
     } else {
       // Remove day if unchecked
-      newDays = values.serviceDays.filter(d => d.day !== day);
+      newDays = values.serviceDays.filter(d => d !== day);
     }
 
     setFieldValue("serviceDays", newDays);
   };
 
   const isDayChecked = (day: string) => {
-    return values.serviceDays.some(d => d.day === day);
+    return values.serviceDays.includes(day);
   };
-
 
   return (
     <Grid container spacing={3} sx={{ marginTop: 2, width: '100%' }}>
@@ -76,7 +74,7 @@ const GasStationForm = ({setFieldValue,onChange,onBlur,values,touched,errors}:Ga
           fullWidth
           label="Nombre de la estación"
           variant="filled"
-          name="gas_station_name"
+          name="gasStationName" // Fixed name to match Formik field
           onChange={onChange}
           onBlur={onBlur}
           value={values.gasStationName}
@@ -113,10 +111,36 @@ const GasStationForm = ({setFieldValue,onChange,onBlur,values,touched,errors}:Ga
       <Grid size={6}>
         <TextField
           fullWidth
+          label="Zona"
+          type="number"
+          variant="filled"
+          name="zone"
+          onChange={onChange}
+          onBlur={onBlur}
+          value={values.zone}
+          helperText={touched.zone && errors.zone}
+          error={touched.zone && Boolean(errors.zone)}
+        />
+      </Grid>
+      <Grid size={6}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={values.open}
+              onChange={onChange}
+              name="open"
+            />
+          }
+          label="Abierto actualmente"
+        />
+      </Grid>
+      <Grid size={6}>
+        <TextField
+          fullWidth
           label="Hora de apertura"
           type="time"
           variant="filled"
-          name="open_time"
+          name="openTime" // Fixed name to match Formik field
           onChange={onChange}
           onBlur={onBlur}
           value={values.openTime}
@@ -131,7 +155,7 @@ const GasStationForm = ({setFieldValue,onChange,onBlur,values,touched,errors}:Ga
           label="Hora de cierre"
           type="time"
           variant="filled"
-          name="close_time"
+          name="closeTime" // Fixed name to match Formik field
           onChange={onChange}
           onBlur={onBlur}
           value={values.closeTime}
@@ -140,25 +164,6 @@ const GasStationForm = ({setFieldValue,onChange,onBlur,values,touched,errors}:Ga
           InputLabelProps={{ shrink: true }}
         />
       </Grid>
-      {/* <Grid size={12}>
-        <Typography
-          sx={{ fontWeight: '600', fontSize: '1.2rem', color: "#242424", marginBottom: 1 }}
-          variant="h5"
-          component="h4"
-          gutterBottom
-        >
-          Seleccione sus Días de Atención:
-        </Typography>
-        <FormGroup row>
-          {["lunes", "martes", "miercoles", "jueves", "viernes", "sábado", "domingo"].map(day => (
-            <FormControlLabel
-              key={day}
-              control={<Checkbox name="service_days" />}
-              label={day}
-            />
-          ))}
-        </FormGroup>
-      </Grid> */}
 
       <Grid size={12}>
         <Typography
@@ -208,11 +213,10 @@ const GasStationForm = ({setFieldValue,onChange,onBlur,values,touched,errors}:Ga
 
         {touched.serviceDays && errors.serviceDays && (
           <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-            {errors.serviceDays}
+            {Array.isArray(errors.serviceDays) ? errors.serviceDays.join(', ') : errors.serviceDays}
           </Typography>
         )}
       </Grid>
-
     </Grid>
   );
 };

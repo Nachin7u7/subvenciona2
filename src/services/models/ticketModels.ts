@@ -9,7 +9,7 @@ export interface GetTicketsByCustomerResponse {
     amount: number;
   };
   gasStation: {
-    gasSatationName: string;
+    gasStationName: string;
     address: string;
   }
 };

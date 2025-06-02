@@ -10,7 +10,7 @@ import type {
   customerDataJsonResponse,
   userJsonResponse,
 } from "./models/authModels";
-import { formatTimeOnly } from "../helper/formatTimeHelper";
+import { formatTimeOnly, hourToDate } from "../helper/formatTimeHelper";
 import type { gasStationDataJsonResponse, zoneJsonResponse } from "./models/gasStationModels";
 import { generateFakeJWT } from "../helper/Tokens";
 
@@ -77,7 +77,7 @@ export const login = async (
       const zo: zoneJsonResponse = zoneResponse.data[0];
 
       return {
-        gasSatationName: gs.gas_station_name,
+        gasStationName: gs.gas_station_name,
         adminFullname: `${user.name} ${user.lastname}`,
         adminEmail: user.email,
         address: gs.address,
@@ -193,17 +193,22 @@ export const registerGasStation = async (
         (acc: number, gs: gasStationDataJsonResponse) => Math.max(acc, parseInt(gs.id) || 0), 0
       ) || 0;
     const newGSId = maxGSId + 1;
+    
+    const CloseTime = hourToDate(payload.closeTime.toString());
+    const OpenTime =  hourToDate(payload.openTime.toString());
+
 
     await jsonServerInstance.post(GAS_STATION_DATA_URL, {
       id: newGSId,
       user_id: newAdminId,
-      gas_station_name: payload.gasSatationName,
+      gas_station_name: payload.gasStationName,
       address: payload.address,
       license: payload.license,
-      open_time: formatTimeOnly(payload.openTime),
-      close_time: formatTimeOnly(payload.closeTime),
+      open_time: formatTimeOnly(OpenTime),
+      close_time: formatTimeOnly(CloseTime),
       zone: payload.zone,
       open: payload.open,
+      image: "https://spanish.xinhuanet.com/2018-01/08/136878630_15153933747041n.jpg",
       service_days: payload.serviceDays
     });
   } catch (err) {

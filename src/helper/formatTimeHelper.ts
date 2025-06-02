@@ -14,3 +14,9 @@ export const formatDateTime = (d: Date): string => {
   const ss = d.getSeconds().toString().padStart(2, "0");
   return `${yyyy}-${mm}-${dd}T${hh}:${min}:${ss}`;
 };
+
+export const hourToDate = (hour:string)=>{
+  const [hours,minutes]=hour.split(':').map(Number)
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+}

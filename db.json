@@ -40,6 +40,7 @@
       "close_time": "2000-01-01T22:00:00",
       "open": true,
       "zone_id": 1,
+      "image": "https://delapatagoniaalmundo.com/wp-content/uploads/2022/10/diesel-bolivia-estacion.jpeg",
       "service_days": [
         "lunes",
         "martes",
@@ -60,6 +61,7 @@
       "close_time": "2000-01-01T23:00:00",
       "open": false,
       "zone_id": 2,
+      "image": "https://radiosplendid.bo/wp-content/uploads/ANHabastece41123-1200x600.jpg",
       "service_days": [
         "lunes",
         "martes",

@@ -1,5 +1,4 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-
 import {
   Box,
   Button,
@@ -36,8 +35,10 @@ const loginSchema = yup.object({
 function LoginPage() {
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage,seterrorMessage]=useState("");
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -49,7 +50,6 @@ function LoginPage() {
     event.preventDefault();
   };
 
-
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -57,27 +57,48 @@ function LoginPage() {
     },
     validationSchema: loginSchema,
     onSubmit: async (values) => {
-      const responseLogin = await login(values.email, values.password);
-      if (!responseLogin) {
+      setIsLoading(true);
+      setLoginError(false); // Reset error state before making request
+      
+      try {
+        const responseLogin = await login(values.email, values.password);
+        
+        if (!responseLogin) {
+          console.log("Login failed - no response"); // Debug log
+          setLoginError(true);
+          formik.resetForm();
+          return;
+        }
+        
+        // Successful login
+        setStorage("token", responseLogin.token);
+        setStorage("user", responseLogin);
+        navigate("/app/dashboard", {
+          replace: true,
+        });
+        
+      } catch (error) {
+        console.error("Login error:", error); // Debug log
         setLoginError(true);
+        seterrorMessage(error.message)
         formik.resetForm();
-        return;
+      } finally {
+        setIsLoading(false);
       }
-      setStorage("token", responseLogin.token);
-      setStorage("user", responseLogin);
-      navigate("/app/dashboard", {
-        replace: true,
-      });
     },
   });
+
+  const handleToastClose = () => {
+    setLoginError(false);
+  };
 
   return (
     <Container maxWidth="xs">
       <Toast
         open={loginError}
-        message="Usuario Incorrecto"
+        message={errorMessage}
         severity="error"
-        onClose={() => setLoginError(false)}
+        onClose={handleToastClose}
       />
       <Box sx={{ marginY: 8 }}>
         <CardContent
@@ -95,17 +116,9 @@ function LoginPage() {
             height="200"
             image="src/assets/gasolinaYaLogo.png"
             sx={{ objectFit: 'contain' }}
-            alt="green iguana"
+            alt="Gasolina Ya Logo"
           />
-          {/* <img loading="lazy" src="gasolinaYaLogo.png" ></img> */}
-          {/* <Typography
-            sx={{ marginBottom: 2, fontWeight:'600', fontSize:'1.4rem', color:"#242424" }}
-            variant="h5"
-            component="h1"
-            gutterBottom
-          >
-            Iniciar Sesión
-          </Typography> */}
+          
           <form onSubmit={formik.handleSubmit}>
             <TextField
               fullWidth
@@ -114,14 +127,13 @@ function LoginPage() {
               variant="filled"
               name="email"
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur} // <-- Add this
+              onBlur={formik.handleBlur}
               value={formik.values.email}
               helperText={formik.touched.email && formik.errors.email}
               error={formik.touched.email && Boolean(formik.errors.email)}
               sx={{ marginBottom: 3, borderRadius: 10 }}
+              disabled={isLoading}
             />
-
-
 
             <FormControl
               fullWidth
@@ -137,6 +149,7 @@ function LoginPage() {
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                disabled={isLoading}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -145,6 +158,7 @@ function LoginPage() {
                       onMouseDown={handleMouseDownPassword}
                       onMouseUp={handleMouseUpPassword}
                       edge="end"
+                      disabled={isLoading}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -158,10 +172,9 @@ function LoginPage() {
               )}
             </FormControl>
 
-
             <Button
               type="submit"
-              //disabled={!(formik.dirty && formik.isValid)}
+              disabled={isLoading || !(formik.dirty && formik.isValid)}
               sx={{
                 marginTop: 2,
                 width: "75%",
@@ -169,16 +182,17 @@ function LoginPage() {
                 fontSize: '1rem',
                 borderRadius: 20,
                 backgroundColor: '#1E8BC3',
-                fontWeight: '500quiero'
-
+                fontWeight: '500' // Fixed typo: removed 'quiero'
               }}
               variant="contained"
             >
-              Iniciar Sesión
+              {isLoading ? "Iniciando..." : "Iniciar Sesión"}
             </Button>
           </form>
+          
           <Button
             onClick={() => navigate('/register')}
+            disabled={isLoading}
             sx={{
               marginTop: 2,
               width: "75%",
