@@ -33,7 +33,7 @@ const Sidebar = ({
       <Toolbar />
       <Divider />
       <List>
-        <ListItem disablePadding>
+        {/* <ListItem disablePadding>
           <ListItemButton
             component={Link}
             to="/"
@@ -44,7 +44,7 @@ const Sidebar = ({
             </ListItemIcon>
             <ListItemText primary="Proyectos" />
           </ListItemButton>
-        </ListItem>
+        </ListItem> */}
 
         <ListItem disablePadding>
           <ListItemButton
