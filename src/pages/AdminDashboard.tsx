@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import {
     Box,
     Typography,
@@ -120,7 +120,6 @@ const Dashboard: React.FC = () => {
     }, []);
 
     if (!db) return <div>Cargando...</div>;
-
     const myStation = db.myStation;
     if (!myStation) return <div>No tienes una estación asignada.</div>;
 
@@ -133,16 +132,16 @@ const Dashboard: React.FC = () => {
 
         for (let i = 0; i < remainingTickets.length; i++) {
             const ticket = remainingTickets[i];
-            if (currentCapacity + ticket.load <= capacity) {
+            if (currentCapacity + parseInt(ticket.details.quantityLt) <= capacity) {
                 containerTickets.push(ticket);
                 currentCapacity += ticket.load;
                 remainingTickets.splice(i, 1);
-                i--; // Adjust index after removing the ticket
+                i--;
             }
         }
-
         setContainers(prev => [...prev, { capacity, tickets: containerTickets }]);
     };
+
 
     return (
         <div style={{ padding: 32, background: "#f5f5f5", minHeight: "100vh" }}>
@@ -249,7 +248,7 @@ const Dashboard: React.FC = () => {
                                 }}
                             >
                                 <Typography variant="body2">
-                                    Ticket ID: {parseInt(ticket.id)}, Carga: {parseInt(ticket.load)} litros
+                                    Ticket ID: {parseInt(ticket.id)}, Carga: {parseInt(ticket.details.quantityLt)} litros
                                 </Typography>
                             </Box>
                         ))}
