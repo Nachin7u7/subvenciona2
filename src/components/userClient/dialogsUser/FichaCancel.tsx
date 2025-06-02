@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
-import deleteTicket from '../../../services/ticketService';
+import { deleteTicket } from '../../../services/ticketService';
 
 interface FichaCancelProps {
   open: boolean;
@@ -26,9 +26,7 @@ const FichaCancel = ({ open, onClose, fichaNumero, ticketId }: FichaCancelProps)
     setLoading(true);
     setError(null);
     try {
-      await deleteTicket(ticketId, {
-        details: { ticket_state_id: 3 },
-      });
+      await deleteTicket(ticketId, false);
       onClose();
     } catch (err) {
       setError('Ocurrió un error al cancelar la ficha.');

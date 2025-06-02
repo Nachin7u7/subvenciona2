@@ -11,7 +11,7 @@ import type {
   ticketStateJsonResponse,
 } from "./models/ticketModels";
 
-const GAS_STATION_DATA_URL = "customer_data";
+const GAS_STATION_DATA_URL = "gas_station_data";
 const TICKET_URL = "tickets";
 const TICKET_STATE_URL = "ticket_state";
 const GAS_TYPE_URL = "gas_type";
@@ -42,7 +42,7 @@ export const getTicketsByCustomer = async (
         (g: gasTypeJsonResponse) => g.id === String(ticket.details.gas_type_id));
       const ticketState: ticketStateJsonResponse = ticketStates.find(
         (s: ticketStateJsonResponse) => s.id === String(ticket.details.ticket_state_id));
-
+      console.log("GasStation", gasStation)
       if (!gasStation || !gasType || !ticketState) {
         throw new TicketWithWrongData();
       }

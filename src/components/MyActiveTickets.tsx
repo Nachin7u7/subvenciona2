@@ -2,26 +2,20 @@ import { Box, Typography, Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
 import FichaCard from '../components/userClient/cards/fichaCard';
 import FichaCancel from '../components/userClient/dialogsUser/FichaCancel';
-import { getTicketsByUser, cancelTicket } from '../services/ticketService';
-
-interface Ticket {
-  id: number;
-  stationName: string;
-  zone: string;
-  ticketNumber: number;
-  status: 'Activa' | 'Usada' | 'Cancelada';
-}
+import { getTicketsByCustomer, deleteTicket } from '../services/ticketService';
+import type { GetTicketsByCustomerResponse } from '../services/models/ticketModels';
 
 const MyActiveTickets = () => {
-  const [fichas, setFichas] = useState<Ticket[]>([]);
+  const [fichas, setFichas] = useState<GetTicketsByCustomerResponse[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [fichaSeleccionada, setFichaSeleccionada] = useState<Ticket | null>(null);
+  const [fichaSeleccionada, setFichaSeleccionada] = useState<GetTicketsByCustomerResponse | null>(null);
 
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const tickets = await getTicketsByUser();
-        setFichas(tickets.filter((t: Ticket) => t.status === 'Activa'));
+        const tickets = await getTicketsByCustomer(1)
+        console.log("tickets por susuario",tickets);
+        setFichas(tickets.filter((t: GetTicketsByCustomerResponse) => t.details.ticketState !== "Cancelado"));
       } catch (error) {
         console.error('Error al obtener fichas:', error);
       }
@@ -29,7 +23,7 @@ const MyActiveTickets = () => {
     fetchTickets();
   }, []);
 
-  const handleCancelarClick = (ticket: Ticket) => {
+  const handleCancelarClick = (ticket: GetTicketsByCustomerResponse) => {
     setFichaSeleccionada(ticket);
     setDialogOpen(true);
   };
@@ -37,14 +31,14 @@ const MyActiveTickets = () => {
   const handleConfirmCancel = async () => {
     if (fichaSeleccionada) {
       try {
-        await cancelTicket(fichaSeleccionada.id);
+        await deleteTicket(fichaSeleccionada.id,false);
         setFichas((prev) =>
           prev.map((f) =>
             f.id === fichaSeleccionada.id ? { ...f, status: 'Cancelada' } : f
           )
         );
       } catch (error) {
-        console.error('Error al cancelar ficha');
+        console.error('Error al cancelar ficha', error);
       }
       setDialogOpen(false);
       setFichaSeleccionada(null);
@@ -61,10 +55,10 @@ const MyActiveTickets = () => {
         {fichas.map((ficha) => (
           <Grid item key={ficha.id}>
             <FichaCard
-              estacion={ficha.stationName}
-              zona={ficha.zone}
+              estacion={ficha.gasStation.gasSatationName}
+              zona={ficha.gasStation.address}
               numeroFicha={ficha.ticketNumber}
-              estado={ficha.status}
+              estado={ficha.details.ticketState}
               onCancelClick={() => handleCancelarClick(ficha)}
             />
           </Grid>

@@ -39,7 +39,7 @@ const FichaCard = ({ estacion, zona, numeroFicha, estado, onCancelClick }: Ficha
           color="error"
           fullWidth
           onClick={onCancelClick}
-          disabled={estado !== 'Activa'}
+          disabled={estado !== 'Pendiente'}
         >
           Cancelar
         </Button>
