@@ -109,18 +109,28 @@ function EditStationModal({ open, onClose, station, onSave }: any) {
 
 const AdminDashboard: React.FC = () => {
     const [db, setDb] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
     const [showCapacityModal, setShowCapacityModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [containers, setContainers] = useState<{ capacity: number; tickets: any[] }[]>([]);
 
     useEffect(() => {
+        if (!LOGGED_USER || Object.keys(LOGGED_USER).length === 0) {
+            window.location.reload();
+        }
+    }, [LOGGED_USER]);
+    
+    useEffect(() => {
         const fetchData = async () => {
-            setDb(await getAdminDashboardData(LOGGED_USER_ID));
+            const data = await getAdminDashboardData(LOGGED_USER_ID);
+            setDb(data);
+            setLoading(false);
         };
         fetchData();
     }, []);
 
-    if (!db) return <div>Cargando...</div>;
+    if (loading) return <div>Cargando...</div>;
+    if (!db) return <div>Error al cargar los datos.</div>;
     const myStation = db.gasStations.find((gs: any) => parseInt(gs.userId) === LOGGED_USER_ID);
     if (!myStation) return <div>No tienes una estación asignada.</div>;
 
@@ -142,7 +152,6 @@ const AdminDashboard: React.FC = () => {
         }
         setContainers(prev => [...prev, { capacity, tickets: containerTickets }]);
     };
-
 
     return (
         <div style={{ padding: 32, background: "#f5f5f5", minHeight: "100vh" }}>
@@ -181,20 +190,6 @@ const AdminDashboard: React.FC = () => {
                 >
                     {myStation?.adminFullname || "Gasolinera"}
                 </Typography>
-                {/* <Button
-                    variant="contained"
-                    sx={{
-                        ml: "auto",
-                        background: "#fff",
-                        color: "#1976d2",
-                        fontWeight: 600,
-                        boxShadow: "0 2px 8px rgba(25,118,210,0.08)",
-                        "&:hover": { background: "#e3f2fd" }
-                    }}
-                    onClick={() => setShowEditModal(true)}
-                >
-                    Editar perfil
-                </Button> */}
             </Box>
             <Box sx={{ mb: 3 }}>
                 <Button
