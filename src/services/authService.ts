@@ -208,6 +208,7 @@ export const registerGasStation = async (
       close_time: formatTimeOnly(CloseTime),
       zone: payload.zone,
       open: payload.open,
+      image: "https://spanish.xinhuanet.com/2018-01/08/136878630_15153933747041n.jpg",
       service_days: payload.serviceDays
     });
   } catch (err) {

@@ -11,7 +11,7 @@ import type {
   ticketStateJsonResponse,
 } from "./models/ticketModels";
 
-const GAS_STATION_DATA_URL = "customer_data";
+const GAS_STATION_DATA_URL = "gas_station_data";
 const TICKET_URL = "tickets";
 const TICKET_STATE_URL = "ticket_state";
 const GAS_TYPE_URL = "gas_type";
@@ -58,7 +58,7 @@ export const getTicketsByCustomer = async (
           amount: ticket.details.amount
         },
         gasStation: {
-          gasSatationName: gasStation?.gas_station_name || "",
+          gasStationName: gasStation?.gas_station_name || "",
           address: gasStation?.address || ""
         }
       } as GetTicketsByCustomerResponse;
