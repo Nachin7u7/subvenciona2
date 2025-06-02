@@ -51,6 +51,7 @@ export const getTicketsByCustomer = async (
         id: parseInt(ticket.id),
         ticketNumber: ticket.ticket_number,
         date: new Date(ticket.date),
+        customerId: ticket.customer_data_id,
         details: {
           gasType: gasType?.name || "",
           ticketState: ticketState?.name || "",
@@ -101,6 +102,7 @@ export const getTicketsByLoad = async (
         id: parseInt(ticket.id),
         ticketNumber: ticket.ticket_number,
         date: new Date(ticket.date),
+        customerId: ticket.customer_data_id,
         details: {
           gasType: gasType?.name || "",
           ticketState: ticketState?.name || "",

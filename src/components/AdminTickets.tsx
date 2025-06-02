@@ -1,12 +1,11 @@
 import { Card, CardHeader, CardContent, Typography, Divider, Stack, Button } from "@mui/material";
 
-function AdminTickets({ tickets = [], customers = [], users = [], onDelete }: any) {
+function AdminTickets({ tickets = [], users = [], onDelete }: any) {
 
     return (
         <div style={{ display: "flex", flexWrap: "wrap" }}>
             {(tickets || []).map((ticket: any) => {
-                const customer = (customers || []).find((c: any) => c.id === ticket.customer_data_id);
-                const user = (users || []).find((u: any) => u.id === (customer ? customer.user_id : null));
+                const user = (users || []).find((u: any) => parseInt(u.id) === parseInt(ticket.customerId)) || null;
 
                 return (
                     <Card
@@ -48,7 +47,7 @@ function AdminTickets({ tickets = [], customers = [], users = [], onDelete }: an
                             }
                             subheader={
                                 <Typography variant="caption" color="text.secondary">
-                                    Turno #{ticket.ticket_number}
+                                    Turno #{parseInt(ticket.ticketNumber) || ticket.ticket_number}
                                 </Typography>
                             }
                             sx={{ pb: 0 }}

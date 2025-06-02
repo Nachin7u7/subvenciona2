@@ -249,7 +249,7 @@ const Dashboard: React.FC = () => {
                                 }}
                             >
                                 <Typography variant="body2">
-                                    Ticket ID: {ticket.id}, Carga: {ticket.load} litros
+                                    Ticket ID: {parseInt(ticket.id)}, Carga: {parseInt(ticket.load)} litros
                                 </Typography>
                             </Box>
                         ))}
