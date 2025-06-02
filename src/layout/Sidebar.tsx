@@ -8,7 +8,7 @@ import {
   Toolbar,
   Divider,
 } from "@mui/material";
-import { Home, Info } from "@mui/icons-material";
+import {  Info } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
 import { clearStorage } from "../helper/localStorage";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
