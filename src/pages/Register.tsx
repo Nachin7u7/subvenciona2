@@ -5,8 +5,32 @@ import GasStationForm from "../components/GasStationForm";
 import ClientForm from "../components/ClientForm";
 import PersonIcon from '@mui/icons-material/Person';
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import type { RegisterCustomerRequest, RegisterGasStationRequest, RegisterUserRequest } from "../services/models/authModels";
+import { array, boolean, date, number, object, string } from "yup";
 
 
+const dayschema = object({
+  day: string().required()
+})
+const schema = object({
+  email: string().email().required(),
+  password: string().min(6).required(),
+  confirmPassword: string().min(6).required(),
+  name: string().min(1).max(24).required(),
+  lastname: string().min(1).max(24).required(),
+  admin_role: boolean().required(),
+  // aca empiza el customer
+  license: string().required().min(6),
+  carPlate: string().min(6).max(7).optional(),
+  // aca empieza el gasStation
+  gasSatationName: string().min(6).max(25).optional(),
+  address: string().min(1).max(24).optional(),
+  openTime: date(),
+  closeTime: date(),
+  open: boolean().optional(),
+  zone: number().positive().optional(), 
+  serviceDays: array().of(dayschema).optional()
+})
 
 function RegisterPage() {
   const [modoAdminCreate, setModoAdminCreate] = useState(false);
@@ -18,9 +42,9 @@ function RegisterPage() {
     setModoAdminCreate(newModoAdmin);
   };
 
-  const [user, setUser] = useState({ name: "", lastname: "", email: "", password: "" });
-  const [client, setClient] = useState({ license: "", car_plate: "" });
-  const [gasStation, setGasStation] = useState({ name: "", address: "", license: "", open_time: "", close_time: "", service_days: [] });
+  const [user, setUser] = useState<RegisterUserRequest>();
+  const [client, setClient] = useState<RegisterCustomerRequest>();
+  const [gasStation, setGasStation] = useState<RegisterGasStationRequest>();
 
 
   const children = [
