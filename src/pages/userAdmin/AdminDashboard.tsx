@@ -10,7 +10,7 @@ import {
     TextField,
     Stack
 } from "@mui/material";
-import AdminTickets from "../components/AdminTickets";
+import AdminTickets from "../../components/userAdmin/AdminTickets";
 import gasLogo from "../assets/gasolinaYaProfile.png";
 
 const LOGGED_USER_ID = 2; // Ricardo nota para despues: simulacion de usuario logeado

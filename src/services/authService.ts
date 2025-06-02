@@ -210,7 +210,9 @@ export const registerGasStation = async (
     throw new NetworkError(err);
   }
 };
-// import jsonServerInstance from "../api/JsonInstance";
+
+//AQUI TU CODIGO DYLAN
+// import jsonServerInstance from "../api/JsonInstance";   
 
 // export const login = async (email: string, password: string) => {
 //   const response = await jsonServerInstance.get("/users", {
