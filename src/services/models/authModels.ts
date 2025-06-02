@@ -8,7 +8,7 @@ export interface LoginCustomerResponse {
 };
 
 export interface LoginGasStationResponse {
-  gasSatationName: string;
+  gasStationName: string;
   adminFullname: string;
   adminEmail: string;
   address: string;

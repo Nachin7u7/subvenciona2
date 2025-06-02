@@ -77,7 +77,7 @@ export const login = async (
       const zo: zoneJsonResponse = zoneResponse.data[0];
 
       return {
-        gasSatationName: gs.gas_station_name,
+        gasStationName: gs.gas_station_name,
         adminFullname: `${user.name} ${user.lastname}`,
         adminEmail: user.email,
         address: gs.address,
