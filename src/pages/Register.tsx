@@ -1,39 +1,87 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Box, Button, CardContent, CardMedia, Container, FilledInput, FormControl, Grid, IconButton, InputAdornment, InputLabel, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GasStationForm from "../components/GasStationForm";
-import ClientForm from "../components/ClientForm";
+import { ClientForm } from "../components/ClientForm";
 import PersonIcon from '@mui/icons-material/Person';
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import type { RegisterCustomerRequest, RegisterGasStationRequest, RegisterUserRequest } from "../services/models/authModels";
-import { array, boolean, date, number, object, string } from "yup";
-
+import { array, boolean, date, number, object, string,ref } from "yup";
+import { useFormik } from "formik";
+import { registerCustomer, registerGasStation } from "../services/authService";
+import { UserRegistrationError } from "../services/errors/authErrors";
 
 const dayschema = object({
   day: string().required()
 })
 const schema = object({
-  email: string().email().required(),
-  password: string().min(6).required(),
-  confirmPassword: string().min(6).required(),
-  name: string().min(1).max(24).required(),
-  lastname: string().min(1).max(24).required(),
+  email: string().email("email no valido").required("email obligatorio"),
+  password: string().min(6, "la contraseña debe tener 6 caracteres").required("La Contraseña es obligatoria"),
+  confirmPassword: string()
+  .oneOf([ref("password")], "Las contraseñas no coinciden")
+  .required("Debe confirmar la contraseña"),
+
+  // confirmPassword: string().min(6).required("Debe ingresar la misma contraseña"),
+  name: string().min(1).max(24).required("nombre obligatiorio"),
+  lastname: string().min(1).max(24).required("apellidos obligatorios"),
   admin_role: boolean().required(),
   // aca empiza el customer
   license: string().required().min(6),
   carPlate: string().min(6).max(7).optional(),
   // aca empieza el gasStation
-  gasSatationName: string().min(6).max(25).optional(),
+  gasStationName: string().min(6).max(25).optional(),
   address: string().min(1).max(24).optional(),
-  openTime: date(),
-  closeTime: date(),
+  openTime: date().optional(),
+  closeTime: date().optional(),
   open: boolean().optional(),
-  zone: number().positive().optional(), 
+  zone: number().positive().optional(),
+  
   serviceDays: array().of(dayschema).optional()
 })
 
 function RegisterPage() {
   const [modoAdminCreate, setModoAdminCreate] = useState(false);
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      name: "",
+      lastname: "",
+      admin_role: false,
+      // validation for customer
+      license: "",
+      carPlate: "",
+      // validation for gasStation
+      gasStationName: "",
+      address: "",
+      openTime: null as Date | null,  // in initialValues
+      closeTime: null as Date | null,  // in initialValues
+      open: false,
+      zone: 0,
+      serviceDays: [] as Array<{ day: string }>,
+
+    },
+    validationSchema: schema,
+    onSubmit: async (values) => {
+      //implement quenta changes
+      console.log(values)
+      try {
+
+      } catch (error) {
+        if (error instanceof UserRegistrationError) {
+          console.error(UserRegistrationError)
+        }
+
+      }
+    }
+  })
+
+  useEffect(() => {
+    formik.setFieldValue("admin_role", modoAdminCreate);
+  }, [modoAdminCreate]);
+  
 
   const handleChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -42,16 +90,11 @@ function RegisterPage() {
     setModoAdminCreate(newModoAdmin);
   };
 
-  const [user, setUser] = useState<RegisterUserRequest>();
-  const [client, setClient] = useState<RegisterCustomerRequest>();
-  const [gasStation, setGasStation] = useState<RegisterGasStationRequest>();
-
-
   const children = [
-    <ToggleButton value={false} key="Cliente" sx={{display:"flex",flexDirection:'column'}}>
-      <PersonIcon sx={{height:50,width:50}}/>
+    <ToggleButton value={false} key="Cliente" sx={{ display: "flex", flexDirection: 'column' }}>
+      <PersonIcon sx={{ height: 50, width: 50 }} />
       <Typography
-        sx={{width:110, fontWeight: '600', fontSize: '1rem', color: !modoAdminCreate?"#242424":"#757575" }}
+        sx={{ width: 110, fontWeight: '600', fontSize: '1rem', color: !modoAdminCreate ? "#242424" : "#757575" }}
         variant="h5"
         component="h5"
       >
@@ -59,10 +102,10 @@ function RegisterPage() {
       </Typography>
     </ToggleButton>,
 
-    <ToggleButton value={true} key="Gasolinera" sx={{display:"flex",flexDirection:'column'}}>
-      <LocalGasStationIcon sx={{height:50,width:50}}/>
+    <ToggleButton value={true} key="Gasolinera" sx={{ display: "flex", flexDirection: 'column' }}>
+      <LocalGasStationIcon sx={{ height: 50, width: 50 }} />
       <Typography
-        sx={{width:110, fontWeight: '600', fontSize: '1rem', color: modoAdminCreate?"#242424":"#757575" }}
+        sx={{ width: 110, fontWeight: '600', fontSize: '1rem', color: modoAdminCreate ? "#242424" : "#757575" }}
         variant="h5"
         component="h5"
       >
@@ -89,6 +132,10 @@ function RegisterPage() {
   const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
+
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
 
   return (
     <Container maxWidth='xs' sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
@@ -128,11 +175,11 @@ function RegisterPage() {
                 label="Nombre(s)"
                 variant="filled"
                 name="name"
-                // onChange={formik.handleChange}
-                // onBlur={formik.handleBlur} // <-- Add this
-                // value={formik.values.email}
-                // helperText={formik.touched.email && formik.errors.email}
-                // error={formik.touched.email && Boolean(formik.errors.email)}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur} // <-- Add this
+                value={formik.values.name}
+                helperText={formik.touched.name && formik.errors.name}
+                error={formik.touched.name && Boolean(formik.errors.name)}
                 sx={{ marginBottom: 0, borderRadius: 10 }}
               />
             </Grid>
@@ -143,11 +190,12 @@ function RegisterPage() {
                 label="Apellidos"
                 variant="filled"
                 name="lastname"
-                // onChange={formik.handleChange}
-                // onBlur={formik.handleBlur} // <-- Add this
-                // value={formik.values.email}
-                // helperText={formik.touched.email && formik.errors.email}
-                // error={formik.touched.email && Boolean(formik.errors.email)}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur} // <-- Add this
+                value={formik.values.lastname}
+                helperText={formik.touched.lastname && formik.errors.lastname}
+                error={formik.touched.lastname && Boolean(formik.errors.lastname)}
+
                 sx={{ marginBottom: 0, borderRadius: 10 }}
               />
             </Grid>
@@ -158,11 +206,11 @@ function RegisterPage() {
                 label="Correo electrónico"
                 variant="filled"
                 name="email"
-                // onChange={formik.handleChange}
-                // onBlur={formik.handleBlur} // <-- Add this
-                // value={formik.values.email}
-                // helperText={formik.touched.email && formik.errors.email}
-                // error={formik.touched.email && Boolean(formik.errors.email)}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur} // <-- Add this
+                value={formik.values.email}
+                helperText={formik.touched.email && formik.errors.email}
+                error={formik.touched.email && Boolean(formik.errors.email)}
                 sx={{ marginBottom: 0, borderRadius: 10 }}
               />
             </Grid>
@@ -171,16 +219,16 @@ function RegisterPage() {
                 fullWidth
                 variant="filled"
                 sx={{ marginBottom: 1, borderRadius: 10 }}
-              // error={formik.touched.password && Boolean(formik.errors.password)}
+                error={formik.touched.password && Boolean(formik.errors.password)}
               >
                 <InputLabel htmlFor="filled-adornment-password">Contraseña</InputLabel>
                 <FilledInput
                   id="filled-adornment-password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  // value={formik.values.password}
-                  // onChange={formik.handleChange}
-                  // onBlur={formik.handleBlur}
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
@@ -195,11 +243,11 @@ function RegisterPage() {
                     </InputAdornment>
                   }
                 />
-                {/* {formik.touched.password && formik.errors.password && (
-                <Typography variant="caption" color="error">
-                  {formik.errors.password}
-                </Typography>
-              )} */}
+                {formik.touched.password && formik.errors.password && (
+                  <Typography variant="caption" color="error">
+                    {formik.errors.password}
+                  </Typography>
+                )}
               </FormControl>
             </Grid>
 
@@ -208,35 +256,35 @@ function RegisterPage() {
                 fullWidth
                 variant="filled"
                 sx={{ marginBottom: 1, borderRadius: 10 }}
-              // error={formik.touched.password && Boolean(formik.errors.password)}
+                error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
               >
                 <InputLabel htmlFor="filled-adornment-repeat-password">Repetir Contraseña</InputLabel>
                 <FilledInput
                   id="filled-adornment-repeat-password"
-                  name="repeat-password"
-                  type={showPassword ? "text" : "password"}
-                  // value={formik.values.password}
-                  // onChange={formik.handleChange}
-                  // onBlur={formik.handleBlur}
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={formik.values.confirmPassword}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
-                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                        onClick={handleClickShowPassword}
+                        aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                        onClick={handleClickShowConfirmPassword}
                         onMouseDown={handleMouseDownPassword}
                         onMouseUp={handleMouseUpPassword}
                         edge="end"
                       >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   }
                 />
-                {/* {formik.touched.password && formik.errors.password && (
-                <Typography variant="caption" color="error">
-                  {formik.errors.password}
-                </Typography>
-              )} */}
+                {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                  <Typography variant="caption" color="error">
+                    {formik.errors.confirmPassword}
+                  </Typography>
+                )}
               </FormControl>
             </Grid>
             <Grid size={12}>
@@ -253,7 +301,23 @@ function RegisterPage() {
               </ToggleButtonGroup>
 
             </Grid>
-            {modoAdminCreate ? <GasStationForm /> : <ClientForm />}
+            {modoAdminCreate ?
+              <GasStationForm
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                values={formik.values}
+                setFieldValue={formik.setFieldValue}
+                touched={formik.touched}
+                errors={formik.errors}
+              />
+              :
+              <ClientForm
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                values={formik.values}
+                touched={formik.touched}
+                errors={formik.errors}
+              />}
             <Grid size={12}>
               <Button
                 type="submit"
@@ -265,7 +329,7 @@ function RegisterPage() {
                   fontSize: '1rem',
                   borderRadius: 20,
                   backgroundColor: '#1E8BC3',
-                  fontWeight: '500quiero'
+                  fontWeight: '500'
 
                 }}
                 variant="contained"
