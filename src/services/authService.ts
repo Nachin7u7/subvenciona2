@@ -193,6 +193,16 @@ export const registerGasStation = async (
         (acc: number, gs: gasStationDataJsonResponse) => Math.max(acc, parseInt(gs.id) || 0), 0
       ) || 0;
     const newGSId = maxGSId + 1;
+    console.log('closeTime:',payload.closeTime)
+
+    const hourToDate = (hour:string)=>{
+      const [hours,minutes]=hour.split(':').map(Number)
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+    }
+    const CloseTime = hourToDate(payload.closeTime.toString());
+    const OpenTime =  hourToDate(payload.openTime.toString());
+
 
     await jsonServerInstance.post(GAS_STATION_DATA_URL, {
       id: newGSId,
@@ -200,8 +210,8 @@ export const registerGasStation = async (
       gas_station_name: payload.gasStationName,
       address: payload.address,
       license: payload.license,
-      open_time: formatTimeOnly(payload.openTime),
-      close_time: formatTimeOnly(payload.closeTime),
+      open_time: formatTimeOnly(OpenTime),
+      close_time: formatTimeOnly(CloseTime),
       zone: payload.zone,
       open: payload.open,
       service_days: payload.serviceDays

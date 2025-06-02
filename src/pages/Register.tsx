@@ -7,7 +7,7 @@ import { ClientForm } from "../components/ClientForm";
 import PersonIcon from '@mui/icons-material/Person';
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import type { RegisterCustomerRequest, RegisterGasStationRequest, RegisterUserRequest } from "../services/models/authModels";
-import { array, boolean, date, number, object, string, ref } from "yup";
+import { array, boolean, number, object, string, ref } from "yup";
 import { useFormik } from "formik";
 import { registerCustomer, registerGasStation } from "../services/authService";
 import { UserRegistrationError } from "../services/errors/authErrors";
@@ -44,7 +44,7 @@ const schema = object({
   }),
   address: string().when('admin_role', {
     is: true,
-    then: (schema) => schema.required("Dirección es obligatoria").min(1).max(24),
+    then: (schema) => schema.required("Dirección es obligatoria").min(20).max(70),
     otherwise: (schema) => schema.optional()
   }),
   openTime: string().when('admin_role', {
@@ -119,6 +119,7 @@ function RegisterPage() {
             license: values.license,
             serviceDays: values.serviceDays
           };
+          console.log('gas station data:',gasStationData)
           
           const result = await registerGasStation(gasStationData);
           console.log("Gas station registered successfully:", result);
