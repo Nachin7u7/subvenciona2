@@ -1,6 +1,8 @@
 import { Flare, Visibility, VisibilityOff } from "@mui/icons-material";
-import { Box, CardContent, CardMedia, Container, FilledInput, FormControl, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Box, Button, CardContent, CardMedia, Container, FilledInput, FormControl, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { useState } from "react";
+import GasStationForm from "../components/GasStationForm";
+import ClientForm from "../components/ClientForm";
 
 function RegisterPage() {
   const [modoAdminCreate, setModoAdminCreate] = useState(false);
@@ -72,7 +74,7 @@ function RegisterPage() {
               component="img"
               height="100"
               image="src/assets/gasolinaYaLogo.png"
-              sx={{ objectFit: 'contain', width: 80, marginX: 2 }}
+              sx={{ objectFit: 'contain', width: 80, marginX: 1 }}
               alt="green iguana"
             />
             <Typography
@@ -81,7 +83,7 @@ function RegisterPage() {
               component="h1"
               gutterBottom
             >
-              {`Crear Usuario ${!modoAdminCreate ? "Cliente" : "Gasolinera"}`}
+              Crear Cuenta
             </Typography>
           </div>
           <Grid container spacing={3} sx={{ marginTop: 2, width: '100%' }}>
@@ -215,23 +217,32 @@ function RegisterPage() {
               <ToggleButtonGroup size="large" {...control} aria-label="Large sizes">
                 {children}
               </ToggleButtonGroup>
-              {/* <FormControl variant="filled" sx={{ width:250,  marginBottom: 1, borderRadius: 10 }}>
-                <InputLabel id="demo-simple-select-filled-label">Tipo de Usuario</InputLabel>
-                <Select
-                  labelId="demo-simple-select-filled-label"
-                  id="demo-simple-select-filled"
-                  // value={age}
-                  // onChange={handleChange}
-                >
-                  <MenuItem value="">
-                    <em>Selecciona</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Cliente</MenuItem>
-                  <MenuItem value={20}>Gasolinera</MenuItem>
-                </Select>
-              </FormControl> */}
+              
             </Grid>
+          {modoAdminCreate ? <GasStationForm /> : <ClientForm />}
+          <Grid size={12}>
+          <Button
+              type="submit"
+              //disabled={!(formik.dirty && formik.isValid)}
+              sx={{
+                marginTop: 2,
+                width: "75%",
+                height: '3rem',
+                fontSize: '1rem',
+                borderRadius: 20,
+                backgroundColor: '#1E8BC3',
+                fontWeight: '500quiero'
+
+              }}
+              variant="contained"
+            >
+              {`Registrar ${!modoAdminCreate ? "Cliente" : "Gasolinera"}`}
+            </Button>
           </Grid>
+          </Grid>
+
+          
+
         </CardContent>
       </Box>
     </Container>
