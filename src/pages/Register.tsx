@@ -208,7 +208,7 @@ function RegisterPage() {
         <form onSubmit={formik.handleSubmit}>
           <CardContent
             sx={{
-              marginTop: 25,
+              marginTop: 1,
               padding: 4,
               textAlign: "center",
               boxShadow: 3,
