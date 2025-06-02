@@ -210,3 +210,15 @@ export const registerGasStation = async (
     throw new NetworkError(err);
   }
 };
+
+export const getUsers = async (): Promise<userJsonResponse[]> => {
+  try {
+    const response = await jsonServerInstance.get(USER_URL);
+    if (!Array.isArray(response.data)) {
+      throw new NetworkError("Error al obtener los usuarios");
+    }
+    return response.data as userJsonResponse[];
+  } catch (err) {
+    throw new NetworkError(err);
+  }
+};

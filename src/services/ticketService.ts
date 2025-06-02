@@ -80,7 +80,8 @@ export const getTicketsByLoad = async (
       jsonServerInstance.get(TICKET_STATE_URL),
       jsonServerInstance.get(GAS_TYPE_URL)
     ]);
-    if (!Array.isArray(ticketsRes.data) || ticketsRes.data.length === 0) {
+
+    if (!Array.isArray(ticketsRes.data)) {
       throw new NotFoundError("No se encontraron tickets para esta carga");
     }
 

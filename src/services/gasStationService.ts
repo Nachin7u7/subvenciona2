@@ -85,7 +85,7 @@ export const getGasStationById = async (
 export const getGasTypes = async (): Promise<GetGasTypeResponse[]> => {
   try {
     const gasTypesResponse = await jsonServerInstance.get(GAS_TYPE_URL)
-    if (Array.isArray(gasTypesResponse.data)) {
+    if (!Array.isArray(gasTypesResponse.data)) {
       throw new NotFoundError("No se encontraron tipos de combustibles")
     }
     return gasTypesResponse.data.map((gasType: gasTypeJsonResponse) => {
@@ -105,7 +105,7 @@ export const getGasTypes = async (): Promise<GetGasTypeResponse[]> => {
 export const getZones = async (): Promise<GetZoneResponse[]> => {
   try {
     const zoneResponse = await jsonServerInstance.get(ZONE_URL)
-    if (Array.isArray(zoneResponse.data)) {
+    if (!Array.isArray(zoneResponse.data)) {
       throw new NotFoundError("No se encontraron zonas disponibles")
     }
     return zoneResponse.data.map((zone: zoneJsonResponse) => {
