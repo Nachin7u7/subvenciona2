@@ -1,5 +1,7 @@
+import ClientDashboard from "./clientDashboard";
+
 function Dashboard() {
-  return <h1>Hello Dashboard xd</h1>;
+  return <ClientDashboard/>
 }
 
 export default Dashboard;

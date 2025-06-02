@@ -27,13 +27,6 @@
       "lastname": "Fernández",
       "email": "diego.fernandez@example.com",
       "password": "D13g0_F3rn"
-    },
-    {
-      "id": 5,
-      "name": "tyler",
-      "lastname": "Andres",
-      "email": "t@a.com",
-      "password": "Pato1234"
     }
   ],
   "gas_station_data": [
@@ -105,12 +98,6 @@
       "user_id": 4,
       "license": "DLX-8473629-MX",
       "car_plate": "XYZ-5678"
-    },
-    {
-      "id": 3,
-      "user_id": 5,
-      "license": "asdf123",
-      "car_plate": "asdf234"
     }
   ],
   "prices": [
