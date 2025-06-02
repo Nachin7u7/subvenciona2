@@ -73,7 +73,9 @@ function LoginPage() {
         // Successful login
         setStorage("token", responseLogin.token);
         setStorage("user", responseLogin);
-        navigate("/app/dashboard", {
+        const rol = responseLogin.rol
+        const route = (rol==='admin'?"/app/AdminDashboard":"/app/dashboard")
+        navigate(route, {
           replace: true,
         });
         
