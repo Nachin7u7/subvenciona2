@@ -11,6 +11,7 @@ import { array, boolean, number, object, string, ref } from "yup";
 import { useFormik } from "formik";
 import { registerCustomer, registerGasStation } from "../services/authService";
 import { UserRegistrationError } from "../services/errors/authErrors";
+import Toast from "../components/Toast";
 
 const schema = object({
   email: string().email("email no valido").required("email obligatorio"),
@@ -72,6 +73,12 @@ const schema = object({
 
 function RegisterPage() {
   const [modoAdminCreate, setModoAdminCreate] = useState(false);
+
+  const [regError, setRegError] = useState(false);
+  const [errorMessage,seterrorMessage]=useState("");
+  const handleToastClose = () => {
+    setRegError(false);
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -139,12 +146,18 @@ function RegisterPage() {
         // Handle success (redirect, show message, etc.)
         
       } catch (error) {
+        setRegError(true);
         if (error instanceof UserRegistrationError) {
           console.error("Registration error:", error);
           // Handle specific registration errors
+          seterrorMessage(error.message)
         } else {
           console.error("Unexpected error:", error);
+          seterrorMessage(error.message)
         }
+        
+        
+        formik.resetForm();
       }
     }
   });
@@ -204,6 +217,12 @@ function RegisterPage() {
 
   return (
     <Container maxWidth='xs' sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
+      <Toast
+              open={regError}
+              message={errorMessage}
+              severity="error"
+              onClose={handleToastClose}
+            />
       <Box sx={{ marginY: 8, width: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
         <form onSubmit={formik.handleSubmit}>
           <CardContent
