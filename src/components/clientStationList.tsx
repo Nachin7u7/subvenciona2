@@ -78,10 +78,14 @@ const ClientStationList = () => {
     }
   };
 
-  return (
-    <Box sx={{ p: 3 }}>
+ return (
+    <Box sx={{ p: 3, fontFamily: '"Quicksand", sans-serif', backgroundColor: '#F5FBFF', minHeight: '100dvh' }}>
       <Box display="flex" alignItems="center" mb={2}>
-        <Typography variant="h6" mr={2}>
+        <Typography
+          variant="h6"
+          mr={2}
+          sx={{ color: '#1DA1F2', fontWeight: 'bold' }}
+        >
           Zona:
         </Typography>
         <Tabs
@@ -89,6 +93,13 @@ const ClientStationList = () => {
           onChange={(_, newValue) => setZonaSeleccionada(newValue)}
           textColor="primary"
           indicatorColor="primary"
+          sx={{
+            '& .MuiTab-root': {
+              fontFamily: '"Quicksand", sans-serif',
+              color: '#1DA1F2',
+              fontWeight: 'bold',
+            },
+          }}
         >
           {zonas.map((zona) => (
             <Tab key={zona} label={zona} value={zona} />
@@ -100,7 +111,7 @@ const ClientStationList = () => {
         {gasStations
           .filter((station) => station.zone === zonaSeleccionada)
           .map((station) => (
-            <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4 }} key={station.id}>
+            <Grid item xs={12} sm={6} md={6} lg={4} key={station.id}>
               <StationCard
                 id={station.id}
                 nombre={station.gasSatationName}

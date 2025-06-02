@@ -46,8 +46,14 @@ const MyActiveTickets = () => {
   };
 
   return (
-    <Box mt={4}>
-      <Typography variant="h6" gutterBottom>
+    <Box mt={4} sx={{ backgroundColor: '#1DA1F2', p: 2, borderRadius: 2 }}>
+      <Typography
+        variant="h5"
+        gutterBottom
+        sx={{
+          color: 'white',
+          fontFamily: 'cursive'}}
+      >
         Mis Fichas Activas
       </Typography>
 
