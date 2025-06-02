@@ -10,7 +10,7 @@ import type {
   customerDataJsonResponse,
   userJsonResponse,
 } from "./models/authModels";
-import { formatTimeOnly } from "../helper/formatTimeHelper";
+import { formatTimeOnly, hourToDate } from "../helper/formatTimeHelper";
 import type { gasStationDataJsonResponse, zoneJsonResponse } from "./models/gasStationModels";
 import { generateFakeJWT } from "../helper/Tokens";
 
@@ -193,13 +193,7 @@ export const registerGasStation = async (
         (acc: number, gs: gasStationDataJsonResponse) => Math.max(acc, parseInt(gs.id) || 0), 0
       ) || 0;
     const newGSId = maxGSId + 1;
-    console.log('closeTime:',payload.closeTime)
-
-    const hourToDate = (hour:string)=>{
-      const [hours,minutes]=hour.split(':').map(Number)
-      const now = new Date();
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-    }
+    
     const CloseTime = hourToDate(payload.closeTime.toString());
     const OpenTime =  hourToDate(payload.openTime.toString());
 
