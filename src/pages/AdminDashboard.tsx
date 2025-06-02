@@ -180,7 +180,7 @@ const Dashboard: React.FC = () => {
                 >
                     {myStation?.adminFullname || "Gasolinera"}
                 </Typography>
-                <Button
+                {/* <Button
                     variant="contained"
                     sx={{
                         ml: "auto",
@@ -193,7 +193,7 @@ const Dashboard: React.FC = () => {
                     onClick={() => setShowEditModal(true)}
                 >
                     Editar perfil
-                </Button>
+                </Button> */}
             </Box>
             <Box sx={{ mb: 3 }}>
                 <Button
