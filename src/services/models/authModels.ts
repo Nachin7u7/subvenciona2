@@ -4,10 +4,11 @@ export interface LoginCustomerResponse {
   license: string;
   carPlate: string;
   rol: string;
+  token: string;
 };
 
 export interface LoginGasStationResponse {
-  gasSatationName: string;
+  gasStationName: string;
   adminFullname: string;
   adminEmail: string;
   address: string;
@@ -18,6 +19,7 @@ export interface LoginGasStationResponse {
   rol: string;
   zone: string;
   serviceDays: string[];
+  token: string;
 };
 
 export interface RegisterUserRequest {
@@ -35,7 +37,7 @@ export interface RegisterCustomerRequest {
 
 export interface RegisterGasStationRequest {
   user: RegisterUserRequest;
-  gasSatationName: string;
+  gasStationName: string;
   address: string;
   license: string;
   openTime: Date;

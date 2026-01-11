@@ -34,6 +34,7 @@ export const getGasStations = async (): Promise<GetGasStationResponse[]> => {
         closeTime: new Date(gasStation.close_time),
         open: gasStation.open,
         zone: zone?.name || "Zona desconocida",
+        image: gasStation.image,
         serviceDays: gasStation.service_days
       } as GetGasStationResponse;
     }) as GetGasStationResponse[];
@@ -72,6 +73,7 @@ export const getGasStationById = async (
       closeTime: new Date(gasStation.close_time),
       open: gasStation.open,
       zone: zone?.name || "Zona desconocida",
+      image: gasStation.image,
       serviceDays: gasStation.service_days
     };
   } catch (err) {
